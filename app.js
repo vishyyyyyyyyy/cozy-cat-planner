@@ -110,21 +110,29 @@ function renderCat(cat) {
 }
 
 function renderDressup() {
-  let html = `<h2>Dress Up Your Cat (${state.dressupStep}/5)</h2>`;
+  let html = `<h2 class="dressup-title">FAT CAT DRESS UP</h2>`;
   switch(state.dressupStep) {
     case 1:
-      html += `<label>Fur Color:
-        <select onchange="window.setFurColor(this.value)">
-          <option value="purple"${state.cat.furColor==='purple'?' selected':''}>Purple</option>
-          <option value="orange"${state.cat.furColor==='orange'?' selected':''}>Orange</option>
-          <option value="gray"${state.cat.furColor==='gray'?' selected':''}>Gray</option>
-          <option value="white"${state.cat.furColor==='white'?' selected':''}>White (Cream)</option>
-          <option value="black"${state.cat.furColor==='black'?' selected':''}>Black</option>
-          <option value="yellow"${state.cat.furColor==='yellow'?' selected':''}>Yellow</option>
-          <option value="green"${state.cat.furColor==='green'?' selected':''}>Green</option>
-          <option value="cinnamon"${state.cat.furColor==='cinnamon'?' selected':''}>Cinnamon</option>
-        </select>
-      </label>`;
+      html += `
+        <div class="dressup-step-label">
+          <div class="fur-title">FUR COLOR</div>
+          <div class="fur-subtitle">CHOOSE YOUR KITTY'S FUR COLOR</div>
+        </div>
+        <div class="fur-color-row">
+          ${[
+            {name: 'purple', color: '#392951'},
+            {name: 'orange', color: '#E07A5F'},
+            {name: 'yellow', color: '#FFCE3A'},
+            {name: 'green', color: '#71A767'},
+            {name: 'gray', color: '#4F4141'},
+            {name: 'black', color: '#150E17'},
+            {name: 'cinnamon', color: '#CE4D4D'},
+            {name: 'white', color: '#FFF4E6'}
+          ].map(opt =>
+            `<button class="fur-color-swatch${state.cat.furColor===opt.name?' selected':''}" style="background:${opt.color};" onclick="window.setFurColor('${opt.name}')" ${opt.disabled?'disabled':''}></button>`
+          ).join('')}
+        </div>
+      `;
       break;
     case 2:
       html += `<label>Costume:
@@ -147,7 +155,7 @@ function renderDressup() {
       </label>`;
       break;
     case 4:
-      html += `<label>Eyes:
+      html += `<label>Decorations:
         <select onchange="window.setEyes(this.value)">
           <option value="">Default</option>
           <option value="happy"${state.cat.eyes==='happy'?' selected':''}>Happy</option>

@@ -1,4 +1,3 @@
-
 // Falling leaves background
 
 
@@ -132,6 +131,7 @@ function renderCat(cat) {
     vampire: 'vampire.svg',
     ghost: 'ghost.svg',
     candycorn: 'candycorn.svg',
+    none : 'none.svg',
   };
   const costumeImg = cat.costume && costumeMap[cat.costume] ? `<img src="assets/costumes/${costumeMap[cat.costume]}" alt="costume" class="cat-overlay costume" />` : '';
   // Accessory overlays
@@ -139,15 +139,17 @@ function renderCat(cat) {
     scarf: 'scarf.svg',
     pumpkinhat: 'pumpkin hat.svg',
     headphone: 'headphone.svg',
+    none : 'none.svg',
   };
   const accessoryImg = cat.accessory && accessoryMap[cat.accessory] ? `<img src="assets/accessories/${accessoryMap[cat.accessory]}" alt="accessory" class="cat-overlay accessory" />` : '';
   // Hat overlays (reuse accessory for now)
-  const hatMap = {
-    'pumpkin hat': 'pumpkin hat.svg',
-    'scarf': 'scarf.svg',
-    'headphone': 'headphone.svg',
+  const decorationMap = {
+    'pumpkin baby': 'pumpkin baby.svg',
+    'ghost babies': 'ghost babies.svg',
+    'leaf pile': 'leaf pile.svg',
+    none : 'none.svg',
   };
-  const hatImg = cat.hat && hatMap[cat.hat] ? `<img src="assets/accessories/${hatMap[cat.hat]}" alt="hat" class="cat-overlay hat" />` : '';
+  const hatImg = cat.hat && decorationMap[cat.hat] ? `<img src="assets/accessories/${decorationMap[cat.hat]}" alt="hat" class="cat-overlay hat" />` : '';
   return `
     <div class="kitty-stack">
       <img src="assets/cats/${catImg}" alt="cat" class="cat-base" />
@@ -159,82 +161,99 @@ function renderCat(cat) {
 }
 
 function renderDressup() {
-  let html = '';
-  switch(state.dressupStep) {
-    case 1:
-      html += `
-        <div class="dressup-step-label">
-          <div class="fur-title">FUR COLOR</div>
-          <div class="fur-subtitle">CHOOSE YOUR KITTY'S FUR COLOR</div>
-        </div>
-        <div class="fur-color-row">
-          ${[
-            {name: 'purple', color: '#392951'},
-            {name: 'orange', color: '#E07A5F'},
-            {name: 'yellow', color: '#FFCE3A'},
-            {name: 'green', color: '#71A767'},
-            {name: 'gray', color: '#4F4141'},
-            {name: 'black', color: '#150E17'},
-            {name: 'cinnamon', color: '#CE4D4D'},
-            {name: 'white', color: '#FFF4E6'}
-          ].map(opt =>
-            `<button class="fur-color-swatch${state.cat.furColor===opt.name?' selected':''}" style="background:${opt.color};" onclick="window.setFurColor('${opt.name}')" ${opt.disabled?'disabled':''}></button>`
-          ).join('')}
-        </div>
-      `;
-      break;
-    case 2:
-      html += `<label>Costume:
-        <select onchange="window.setCostume(this.value)">
-          <option value="">None</option>
-          <option value="vampire"${state.cat.costume==='vampire'?' selected':''}>Vampire</option>
-          <option value="ghost"${state.cat.costume==='ghost'?' selected':''}>Ghost</option>
-          <option value="candycorn"${state.cat.costume==='candycorn'?' selected':''}>Candy Corn</option>
-        </select>
-      </label>`;
-      break;
-    case 3:
-      html += `<label>Accessory:
-        <select onchange="window.setAccessory(this.value)">
-          <option value="">None</option>
-          <option value="scarf"${state.cat.accessory==='scarf'?' selected':''}>Scarf</option>
-          <option value="pumpkinhat"${state.cat.accessory==='pumpkinhat'?' selected':''}>Pumpkin Hat</option>
-          <option value="headphone"${state.cat.accessory==='headphone'?' selected':''}>Headphone</option>
-        </select>
-      </label>`;
-      break;
-    case 4:
-      html += `<label>Decorations:
-        <select onchange="window.setEyes(this.value)">
-          <option value="">Default</option>
-          <option value="happy"${state.cat.eyes==='happy'?' selected':''}>Happy</option>
-          <option value="sleepy"${state.cat.eyes==='sleepy'?' selected':''}>Sleepy</option>
-          <option value="mischief"${state.cat.eyes==='mischief'?' selected':''}>Mischief</option>
-        </select>
-      </label>`;
-      break;
-    case 5:
-      html += `<label>Hat:
-        <select onchange="window.setHat(this.value)">
-          <option value="">None</option>
-          <option value="pumpkin hat"${state.cat.hat==='pumpkin hat'?' selected':''}>Pumpkin Hat</option>
-          <option value="scarf"${state.cat.hat==='scarf'?' selected':''}>Scarf</option>
-          <option value="headphone"${state.cat.hat==='headphone'?' selected':''}>Headphone</option>
-        </select>
-      </label><br><br>
-      <button onclick="window.captureCat()">📸 Capture Cat</button>`;
-      break;
+    let html = '';
+    switch(state.dressupStep) {
+      case 1:
+        html += `
+          <div class="dressup-step-label">
+            <div class="fur-title">FUR COLOR</div>
+            <div class="fur-subtitle">CHOOSE YOUR KITTY'S FUR COLOR</div>
+          </div>
+          <div class="fur-color-panel">
+            <div class="fur-color-grid">
+              <button class="fur-color-swatch${state.cat.furColor==='cinnamon'?' selected':''}" style="background:#CE4D4D;" onclick="window.setFurColor('cinnamon')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='orange'?' selected':''}" style="background:#E07A5F;" onclick="window.setFurColor('orange')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='yellow'?' selected':''}" style="background:#FFCE3A;" onclick="window.setFurColor('yellow')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='green'?' selected':''}" style="background:#71A767;" onclick="window.setFurColor('green')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='purple'?' selected':''}" style="background:#392951;" onclick="window.setFurColor('purple')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='black'?' selected':''}" style="background:#150E17;" onclick="window.setFurColor('black')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='gray'?' selected':''}" style="background:#4F4141;" onclick="window.setFurColor('gray')"></button>
+              <button class="fur-color-swatch${state.cat.furColor==='white'?' selected':''}" style="background:#FFF4E6;" onclick="window.setFurColor('white')"></button>
+            </div>
+          </div>
+        `;
+        break;
+      case 2:
+        html += `
+          <div class="dressup-step-label">
+            <div class="fur-title">OUTFIT</div>
+            <div class="fur-subtitle">CHOOSE YOUR KITTY'S FALL COSTUME</div>
+          </div>
+          <div class="fur-color-panel">
+            <div class="fur-color-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <button class="fur-color-swatch" style="background:url('widget-icons/ghost.svg');" onclick="window.setCostume('ghost')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/vampire.svg');" onclick="window.setCostume('vampire')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/candycorn.svg');" onclick="window.setCostume('candycorn')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/none.svg');" onclick="window.setCostume('none')"></button>
+            </div>
+          </div>
+        `;
+        break;
+      case 3:
+        html += `
+          <div class="dressup-step-label">
+            <div class="fur-title">ACCESSORIES</div>
+            <div class="fur-subtitle">CHOOSE YOUR KITTY'S CUTE ACCESSORIES</div>
+          </div>
+          <div class="fur-color-panel">
+            <div class="fur-color-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <button class="fur-color-swatch" style="background:url('widget-icons/scarf.svg');" onclick="window.setAccessory('scarf')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/pumpkinhat.svg');" onclick="window.setAccessory('pumpkinhat')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/headphone.svg');" onclick="window.setAccessory('headphone')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/none.svg');" onclick="window.setAccessory('none')"></button>
+            </div>
+          </div>
+        `;
+        break;
+      case 4:
+        html += `
+          <div class="dressup-step-label">
+            <div class="fur-title">DECORATIONS</div>
+            <div class="fur-subtitle">ADD SOME FALL MAGIC TO THE SCENE!</div>
+          </div>
+          <div class="fur-color-panel">
+            <div class="fur-color-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <button class="fur-color-swatch" style="background:url('widget-icons/pumpkinbaby.svg');" onclick="window.setEyes('pumpkinbaby')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/ghostbaby.svg');" onclick="window.setEyes('ghostbaby')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/leafpile.svg');" onclick="window.setEyes('leafpile')"></button>
+              <button class="fur-color-swatch" style="background:url('widget-icons/none.svg');" onclick="window.setEyes('none')"></button>
+            </div>
+          </div>
+        `;
+        break;
+      case 5:
+        html += `
+          <div class="dressup-step-label">
+            <div class="fur-title">ADORBS!!</div>
+            <div class="fur-subtitle">SAVE A MEMORY OF YOUR KITTY</div>
+          </div>
+          <div class="fur-color-panel">
+            <button class="fur-color-swatch" style="background:url('widget-icons/camera.svg');" onclick="window.captureCat()"></button>
+          </div>
+          <div class="fur-subtitle">TO GO TO YOUR CALENDAR OR TODO LIST, PRESS THE BUTTONS UNDER YOUR KITTY</div>
+        `;
+        break;
+    }
+    html += '<div class="dressup-buttons">';
+    if (state.dressupStep > 1) {
+      html += `<button onclick="window.prevDressup()">Back</button>`;
+    }
+    if (state.dressupStep < 5) {
+      html += `<button onclick="window.nextDressup()">Next</button>`;
+    }
+    html += '</div>';
+    return html;
   }
-  html += '<div style="margin-top:32px">';
-  if (state.dressupStep > 1) {
-    html += `<button onclick="window.prevDressup()">Back</button> `;
-  }
-  if (state.dressupStep < 5) {
-    html += `<button onclick="window.nextDressup()">Next</button>`;
-  }
-  html += '</div>';
-  return html;
-}
 
 window.setFurColor = (color) => {
   state.cat.furColor = color;
@@ -335,49 +354,53 @@ function getTodayISO() {
   return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 }
 
+function renderDayView() {
+  const { selectedDay, selectedMonth, selectedYear, events } = state.calendar;
+  const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
+  let html = `<div class="day-view-header">Events for ${selectedDay}/${selectedMonth+1}/${selectedYear}</div>`;
+  html += `<div class="day-view-list">`;
+  if (events[dateISO] && events[dateISO].length > 0) {
+    for (let ev of events[dateISO]) {
+      html += `<div class="day-view-event${ev.important ? ' important' : ''}">${ev.text}</div>`;
+    }
+  } else {
+    html += `<div class="day-view-empty">No events for this day.</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
 function renderCalendar() {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const dayNames = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const { month, year, selectedDay, selectedMonth, selectedYear, events } = state.calendar;
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month+1, 0);
   const todayISO = getTodayISO();
-  // Find first day of week (0=Sun, 1=Mon...)
   let startWeekDay = firstDay.getDay();
-  if (startWeekDay === 0) startWeekDay = 7; // Make Monday=1, Sunday=7
-  // Weeks in month
+  if (startWeekDay === 0) startWeekDay = 7;
   const weeks = [];
   let week = [];
-  // Fill initial empty days
   for (let i=1; i<startWeekDay; ++i) week.push(null);
   for (let d=1; d<=lastDay.getDate(); ++d) {
     week.push(d);
     if (week.length === 7) { weeks.push(week); week = []; }
   }
   if (week.length) { while (week.length<7) week.push(null); weeks.push(week); }
-  // Week numbers
-  function getWeekNumber(date) {
-    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    d.setHours(0,0,0,0);
-    d.setDate(d.getDate() + 4 - (d.getDay()||7));
-    const yearStart = new Date(d.getFullYear(),0,1);
-    return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-  }
   let html = `<div class="calendar-header-row">
     <button class="calendar-nav-btn" onclick="window.prevMonth()">&#8592;</button>
     <div class="calendar-month-label">${monthNames[month]} ${year}</div>
     <button class="calendar-nav-btn" onclick="window.nextMonth()">&#8594;</button>
     <button class="calendar-add-btn" onclick="window.showAddEvent()" title="Add Event"><img src="assets/icons/add.svg" alt="Add" /></button>
   </div>`;
-  html += `<div class="calendar-table-outer"><table class="calendar-table"><thead><tr><th></th>`;
+  html += `<div class="calendar-table-outer"><table class="calendar-table" style="border-collapse: collapse;"><thead><tr>`;
   for (let i=0; i<7; ++i) html += `<th class="calendar-dayname${i>=5?' weekend':''}">${dayNames[i]}</th>`;
   html += `</tr></thead><tbody>`;
   for (let w=0; w<weeks.length; ++w) {
     const weekDays = weeks[w];
-    const weekNum = getWeekNumber(new Date(year, month, weekDays.find(d=>d!==null)||1));
-    html += `<tr><td class="calendar-weeknum">${weekNum}</td>`;
+    html += `<tr>`;
     for (let i=0; i<7; ++i) {
-      const d = weekDays[i];
+      const d = weekDays[(i+6)%7];
       let cellClass = 'calendar-daycell';
       let isToday = (year === new Date().getFullYear() && month === new Date().getMonth() && d === new Date().getDate());
       let isSelected = (year === selectedYear && month === selectedMonth && d === selectedDay);
@@ -385,10 +408,9 @@ function renderCalendar() {
       if (isToday) cellClass += ' today';
       if (isSelected) cellClass += ' selected';
       let dateISO = d ? `${year}-${pad2(month+1)}-${pad2(d)}` : '';
-      html += `<td class="${cellClass}" ${d?`onclick=\"window.selectCalendarDay(${d})\"`:''}>`;
+      html += `<td class="${cellClass}" style="border: none; ${isToday ? 'background-color: #9E4A4A; color: #FFF4E6;' : ''}" ${d?`onclick=\"window.selectCalendarDay(${d})\"`:''}>`;
       if (d) {
         html += `<div class="calendar-daynum">${d}</div>`;
-        // Events
         if (events[dateISO]) {
           for (let ev of events[dateISO]) {
             html += `<div class="calendar-event-chip${ev.important?' important':''}">${ev.text}<button class='calendar-event-delete' onclick=\"window.deleteEvent('${dateISO}',${events[dateISO].indexOf(ev)})\">🗑️</button></div>`;
@@ -400,16 +422,7 @@ function renderCalendar() {
     html += `</tr>`;
   }
   html += `</tbody></table></div>`;
-  // Add event modal
-  html += `<div id="calendar-add-modal" class="calendar-modal" style="display:none;">
-    <div class="calendar-modal-content">
-      <label for="calendar-event-input">Event:</label>
-      <input id="calendar-event-input" type="text" maxlength="60" placeholder="Enter event..." />
-      <label><input type="checkbox" id="calendar-event-important" /> Important</label>
-      <button onclick="window.addEvent()">Add</button>
-      <button onclick="window.hideAddEvent()">Cancel</button>
-    </div>
-  </div>`;
+  html += renderDayView();
   return html;
 }
 

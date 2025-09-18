@@ -11,7 +11,7 @@ function loadState() {
     activePanel: 'dressup',
     dressupStep: 1,
     cat: {
-      furColor: 'purple',
+      furColor: 'gray',
       costume: null,
       accessory: null,
       eyes: null,
@@ -33,10 +33,16 @@ function render() {
       <div class="kitty-container">
         ${renderCat(state.cat)}
       </div>
-      <div class="toggle-buttons">
-        <button class="circle-btn${state.activePanel==='dressup' ? ' active' : ''}" title="Dress Up" onclick="window.setPanel('dressup')">🐾</button>
-        <button class="circle-btn${state.activePanel==='calendar' ? ' active' : ''}" title="Calendar" onclick="window.setPanel('calendar')">📅</button>
-        <button class="circle-btn${state.activePanel==='todo' ? ' active' : ''}" title="Todo List" onclick="window.setPanel('todo')">📝</button>
+      <div class="toggle-buttons toggle-row">
+        <button class="circle-btn${state.activePanel==='dressup' ? ' active' : ''}" title="Dress Up" onclick="window.setPanel('dressup')">
+          <img src="assets/icons/fluent_clothes-hanger-12-filled.svg" alt="Dress Up" class="icon-btn" />
+        </button>
+        <button class="circle-btn${state.activePanel==='todo' ? ' active' : ''}" title="Todo List" onclick="window.setPanel('todo')">
+          <img src="assets/icons/lucide_list-todo.svg" alt="Todo List" class="icon-btn" />
+        </button>
+        <button class="circle-btn${state.activePanel==='calendar' ? ' active' : ''}" title="Calendar" onclick="window.setPanel('calendar')">
+          <img src="assets/icons/mdi_calendar.svg" alt="Calendar" class="icon-btn" />
+        </button>
       </div>
     </div>
     <div class="right-panel">
@@ -62,35 +68,35 @@ function renderPanel() {
 function renderCat(cat) {
   // Map furColor to image filename
   const colorMap = {
-    purple: 'purple cat.png',
-    orange: 'orange cat.png',
-    gray: 'gray cat.png',
-    white: 'cream cat.png',
-    black: 'black cat.png',
-    yellow: 'yellow cat.png',
-    green: 'green cat.png',
-    cinnamon: 'cinnamon cat.png',
+    purple: 'purple cat.svg',
+    orange: 'orange cat.svg',
+    gray: 'gray cat.svg',
+    white: 'cream cat.svg',
+    black: 'black cat.svg',
+    yellow: 'yellow cat.svg',
+    green: 'green cat.svg',
+    cinnamon: 'cinnamon cat.svg',
   };
-  const catImg = colorMap[cat.furColor] || 'purple cat.png';
+  const catImg = colorMap[cat.furColor] || 'purple cat.svg';
   // Costume overlays
   const costumeMap = {
-    vampire: 'vampire.png',
-    ghost: 'ghost.png',
-    candycorn: 'candycorn.png',
+    vampire: 'vampire.svg',
+    ghost: 'ghost.svg',
+    candycorn: 'candycorn.svg',
   };
   const costumeImg = cat.costume && costumeMap[cat.costume] ? `<img src="assets/costumes/${costumeMap[cat.costume]}" alt="costume" class="cat-overlay costume" />` : '';
   // Accessory overlays
   const accessoryMap = {
-    scarf: 'scarf.png',
-    pumpkinhat: 'pumpkin hat.png',
-    headphone: 'headphone.png',
+    scarf: 'scarf.svg',
+    pumpkinhat: 'pumpkin hat.svg',
+    headphone: 'headphone.svg',
   };
   const accessoryImg = cat.accessory && accessoryMap[cat.accessory] ? `<img src="assets/accessories/${accessoryMap[cat.accessory]}" alt="accessory" class="cat-overlay accessory" />` : '';
   // Hat overlays (reuse accessory for now)
   const hatMap = {
-    'pumpkin hat': 'pumpkin hat.png',
-    'scarf': 'scarf.png',
-    'headphone': 'headphone.png',
+    'pumpkin hat': 'pumpkin hat.svg',
+    'scarf': 'scarf.svg',
+    'headphone': 'headphone.svg',
   };
   const hatImg = cat.hat && hatMap[cat.hat] ? `<img src="assets/accessories/${hatMap[cat.hat]}" alt="hat" class="cat-overlay hat" />` : '';
   return `
@@ -256,6 +262,7 @@ window.captureCat = async () => {
 function renderCalendar() {
   return `<h2>Calendar (Coming Soon)</h2><p>Your calendar will appear here.</p>`;
 }
+
 function renderTodo() {
   return `<h2>Todo List (Coming Soon)</h2><p>Your todo list will appear here.</p>`;
 }

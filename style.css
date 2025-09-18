@@ -1,3 +1,132 @@
+/* --- Todo List Panel Styles --- */
+.todo-header-row {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 12px;
+  margin-top: 8px;
+}
+.todo-add-btn, .todo-clear-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #9E4A4A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-right: 4px;
+}
+.todo-add-btn img, .todo-clear-btn img {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(0%) hue-rotate(0deg) brightness(1.1);
+}
+.todo-list-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.todo-day-group {
+  margin-bottom: 18px;
+}
+.todo-day-label {
+  font-size: 1.2rem;
+  color: #9E4A4A;
+  font-weight: bold;
+  margin-bottom: 6px;
+  margin-top: 12px;
+  letter-spacing: 1px;
+  font-family: 'Luckiest Guy', cursive;
+}
+.todo-task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.todo-check-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 3px solid #9E4A4A;
+  background: #FFF4E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border 0.15s;
+  font-size: 1.2rem;
+  padding: 0;
+}
+.todo-check-btn.checked {
+  background: #9E4A4A;
+  border: 3px solid #9E4A4A;
+  color: #FFF4E6;
+}
+.todo-checkmark {
+  font-size: 1.2rem;
+  color: #FFF4E6;
+  font-weight: bold;
+}
+.todo-task-label {
+  font-size: 1.1rem;
+  color: #9E4A4A;
+  font-family: 'Luckiest Guy', cursive;
+  letter-spacing: 0.5px;
+}
+.todo-task-label.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.todo-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.todo-modal-content {
+  background: #FFF4E6;
+  border: 3px solid #9E4A4A;
+  border-radius: 18px;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+.todo-modal-content input[type="text"] {
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 2px solid #9E4A4A;
+  outline: none;
+  margin-bottom: 8px;
+}
+.todo-modal-content select {
+  font-size: 1.1rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 2px solid #9E4A4A;
+  outline: none;
+  margin-bottom: 8px;
+}
+.todo-modal-content button {
+  font-size: 1.1rem;
+  background: #9E4A4A;
+  color: #FFF4E6;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 18px;
+  margin: 0 6px;
+  cursor: pointer;
+  font-family: 'Luckiest Guy', cursive;
+}
 /* Outer wrapper for right panel and title */
 .right-panel-outer {
   display: flex;

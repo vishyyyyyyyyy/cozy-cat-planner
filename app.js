@@ -1,4 +1,45 @@
-// Main renderer logic for Cozy Cat Planner
+
+// Falling leaves background
+
+
+function ensureLeavesBg() {
+  if (!document.getElementById('falling-leaves-bg')) {
+    const leafColors = ['#9E4A4A', '#E07A5F', '#FFCE3A', '#71A767', '#CE4D4D'];
+    const bg = document.createElement('div');
+    bg.id = 'falling-leaves-bg';
+    bg.style.position = 'fixed';
+    bg.style.top = '0';
+    bg.style.left = '0';
+    bg.style.width = '100vw';
+    bg.style.height = '100vh';
+    bg.style.pointerEvents = 'none';
+    bg.style.zIndex = '-1';
+    for (let i = 0; i < 80; ++i) {
+      const leaf = document.createElement('div');
+      leaf.className = 'falling-leaf generic-leaf';
+      const color = leafColors[Math.floor(Math.random()*leafColors.length)];
+      leaf.style.setProperty('--leaf-color', color);
+      const startLeft = Math.random()*100;
+      const drift = (Math.random()-0.5)*30;
+      const startRot = Math.random()*360;
+      const endRot = startRot + (Math.random()>0.5?1:-1)*(180+Math.random()*180);
+      leaf.style.left = startLeft + 'vw';
+      leaf.style.top = (-10 - Math.random()*30) + 'vh';
+      leaf.style.width = (12 + Math.random()*8) + 'px';
+      leaf.style.height = (22 + Math.random()*10) + 'px';
+      leaf.style.animationDelay = (Math.random()*10) + 's';
+      leaf.style.animationDuration = (14 + Math.random()*10) + 's';
+      leaf.style.setProperty('--leaf-drift', drift + 'vw');
+      leaf.style.setProperty('--leaf-rot-start', startRot + 'deg');
+      leaf.style.setProperty('--leaf-rot-end', endRot + 'deg');
+      leaf.style.transform = `rotate(${startRot}deg)`;
+      bg.appendChild(leaf);
+    }
+    document.body.prepend(bg);
+  }
+}
+
+ensureLeavesBg();
 const app = document.getElementById('app');
 
 // Load state from localStorage if available
@@ -275,9 +316,162 @@ window.captureCat = async () => {
   });
 };
 
-function renderCalendar() {
-  return `<p>Your calendar will appear here.</p>`;
+
+// --- Calendar State ---
+if (!state.calendar) {
+  state.calendar = {
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+    selectedDay: new Date().getDate(),
+    selectedMonth: new Date().getMonth(),
+    selectedYear: new Date().getFullYear(),
+    events: {} // { 'YYYY-MM-DD': [ { text, important } ] }
+  };
 }
+
+function pad2(n) { return n < 10 ? '0'+n : ''+n; }
+function getTodayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+
+function renderCalendar() {
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const dayNames = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  const { month, year, selectedDay, selectedMonth, selectedYear, events } = state.calendar;
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month+1, 0);
+  const todayISO = getTodayISO();
+  // Find first day of week (0=Sun, 1=Mon...)
+  let startWeekDay = firstDay.getDay();
+  if (startWeekDay === 0) startWeekDay = 7; // Make Monday=1, Sunday=7
+  // Weeks in month
+  const weeks = [];
+  let week = [];
+  // Fill initial empty days
+  for (let i=1; i<startWeekDay; ++i) week.push(null);
+  for (let d=1; d<=lastDay.getDate(); ++d) {
+    week.push(d);
+    if (week.length === 7) { weeks.push(week); week = []; }
+  }
+  if (week.length) { while (week.length<7) week.push(null); weeks.push(week); }
+  // Week numbers
+  function getWeekNumber(date) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate() + 4 - (d.getDay()||7));
+    const yearStart = new Date(d.getFullYear(),0,1);
+    return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+  }
+  let html = `<div class="calendar-header-row">
+    <button class="calendar-nav-btn" onclick="window.prevMonth()">&#8592;</button>
+    <div class="calendar-month-label">${monthNames[month]} ${year}</div>
+    <button class="calendar-nav-btn" onclick="window.nextMonth()">&#8594;</button>
+    <button class="calendar-add-btn" onclick="window.showAddEvent()" title="Add Event"><img src="assets/icons/add.svg" alt="Add" /></button>
+  </div>`;
+  html += `<div class="calendar-table-outer"><table class="calendar-table"><thead><tr><th></th>`;
+  for (let i=0; i<7; ++i) html += `<th class="calendar-dayname${i>=5?' weekend':''}">${dayNames[i]}</th>`;
+  html += `</tr></thead><tbody>`;
+  for (let w=0; w<weeks.length; ++w) {
+    const weekDays = weeks[w];
+    const weekNum = getWeekNumber(new Date(year, month, weekDays.find(d=>d!==null)||1));
+    html += `<tr><td class="calendar-weeknum">${weekNum}</td>`;
+    for (let i=0; i<7; ++i) {
+      const d = weekDays[i];
+      let cellClass = 'calendar-daycell';
+      let isToday = (year === new Date().getFullYear() && month === new Date().getMonth() && d === new Date().getDate());
+      let isSelected = (year === selectedYear && month === selectedMonth && d === selectedDay);
+      if (i>=5) cellClass += ' weekend';
+      if (isToday) cellClass += ' today';
+      if (isSelected) cellClass += ' selected';
+      let dateISO = d ? `${year}-${pad2(month+1)}-${pad2(d)}` : '';
+      html += `<td class="${cellClass}" ${d?`onclick=\"window.selectCalendarDay(${d})\"`:''}>`;
+      if (d) {
+        html += `<div class="calendar-daynum">${d}</div>`;
+        // Events
+        if (events[dateISO]) {
+          for (let ev of events[dateISO]) {
+            html += `<div class="calendar-event-chip${ev.important?' important':''}">${ev.text}<button class='calendar-event-delete' onclick=\"window.deleteEvent('${dateISO}',${events[dateISO].indexOf(ev)})\">🗑️</button></div>`;
+          }
+        }
+      }
+      html += `</td>`;
+    }
+    html += `</tr>`;
+  }
+  html += `</tbody></table></div>`;
+  // Add event modal
+  html += `<div id="calendar-add-modal" class="calendar-modal" style="display:none;">
+    <div class="calendar-modal-content">
+      <label for="calendar-event-input">Event:</label>
+      <input id="calendar-event-input" type="text" maxlength="60" placeholder="Enter event..." />
+      <label><input type="checkbox" id="calendar-event-important" /> Important</label>
+      <button onclick="window.addEvent()">Add</button>
+      <button onclick="window.hideAddEvent()">Cancel</button>
+    </div>
+  </div>`;
+  return html;
+}
+
+window.prevMonth = () => {
+  let { month, year } = state.calendar;
+  month--;
+  if (month < 0) { month = 11; year--; }
+  state.calendar.month = month;
+  state.calendar.year = year;
+  state.calendar.selectedMonth = month;
+  state.calendar.selectedYear = year;
+  saveState();
+  render();
+};
+window.nextMonth = () => {
+  let { month, year } = state.calendar;
+  month++;
+  if (month > 11) { month = 0; year++; }
+  state.calendar.month = month;
+  state.calendar.year = year;
+  state.calendar.selectedMonth = month;
+  state.calendar.selectedYear = year;
+  saveState();
+  render();
+};
+window.selectCalendarDay = (d) => {
+  state.calendar.selectedDay = d;
+  state.calendar.selectedMonth = state.calendar.month;
+  state.calendar.selectedYear = state.calendar.year;
+  saveState();
+  render();
+};
+window.showAddEvent = () => {
+  document.getElementById('calendar-add-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('calendar-event-input').focus(), 100);
+};
+window.hideAddEvent = () => {
+  document.getElementById('calendar-add-modal').style.display = 'none';
+};
+window.addEvent = () => {
+  const text = document.getElementById('calendar-event-input').value.trim();
+  const important = document.getElementById('calendar-event-important').checked;
+  if (!text) return;
+  const { selectedDay, selectedMonth, selectedYear, events } = state.calendar;
+  const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
+  if (!events[dateISO]) events[dateISO] = [];
+  events[dateISO].push({ text, important });
+  document.getElementById('calendar-event-input').value = '';
+  document.getElementById('calendar-event-important').checked = false;
+  saveState();
+  render();
+  window.hideAddEvent();
+};
+window.deleteEvent = (dateISO, idx) => {
+  const { events } = state.calendar;
+  if (events[dateISO]) {
+    events[dateISO].splice(idx, 1);
+    if (events[dateISO].length === 0) delete events[dateISO];
+    saveState();
+    render();
+  }
+};
 
 
 function renderTodo() {

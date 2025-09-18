@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-const fs = require('fs');
 const path = require('path');
 
 function createWindow() {
@@ -8,23 +7,11 @@ function createWindow() {
     height: 657,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      contextIsolation: true
     }
   });
   win.loadFile('index.html');
-
-  // Handle save-cat-image from renderer
-  ipcMain.handle('save-cat-image', async (event, buffer) => {
-    const { canceled, filePath } = await dialog.showSaveDialog(win, {
-      title: 'Save Your Cat Photo',
-      defaultPath: 'my-cat.png',
-      filters: [{ name: 'PNG Image', extensions: ['png'] }]
-    });
-    if (!canceled && filePath) {
-      fs.writeFileSync(filePath, buffer);
-    }
-  });
 }
 
 app.whenReady().then(() => {
@@ -36,4 +23,16 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
+});
+
+// Optional: IPC for saving cat image
+ipcMain.handle('save-cat-image', async (event, buffer) => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: 'Save Cat Image',
+    defaultPath: 'my-cat.png',
+    filters: [{ name: 'PNG Image', extensions: ['png'] }]
+  });
+  if (!canceled && filePath) {
+    require('fs').writeFileSync(filePath, buffer);
+  }
 });

@@ -28,6 +28,11 @@ function saveState() {
 }
 
 function render() {
+  // Determine panel title
+  let panelTitle = '';
+  if (state.activePanel === 'dressup') panelTitle = 'FAT CAT DRESS UP';
+  if (state.activePanel === 'calendar') panelTitle = 'CALENDAR';
+  if (state.activePanel === 'todo') panelTitle = 'TODO LIST';
   app.innerHTML = `
     <div class="left-panel">
       <div class="kitty-container">
@@ -35,18 +40,21 @@ function render() {
       </div>
       <div class="toggle-buttons toggle-row">
         <button class="circle-btn${state.activePanel==='dressup' ? ' active' : ''}" title="Dress Up" onclick="window.setPanel('dressup')">
-          <img src="assets/icons/fluent_clothes-hanger-12-filled.svg" alt="Dress Up" class="icon-btn" />
+          <img src="assets/icons/fluent_clothes-hanger-12-filled${state.activePanel==='dressup' ? '-cream' : ''}.svg" alt="Dress Up" class="icon-btn" />
         </button>
         <button class="circle-btn${state.activePanel==='todo' ? ' active' : ''}" title="Todo List" onclick="window.setPanel('todo')">
-          <img src="assets/icons/lucide_list-todo.svg" alt="Todo List" class="icon-btn" />
+          <img src="assets/icons/lucide_list-todo${state.activePanel==='todo' ? '-cream' : ''}.svg" alt="Todo List" class="icon-btn" />
         </button>
         <button class="circle-btn${state.activePanel==='calendar' ? ' active' : ''}" title="Calendar" onclick="window.setPanel('calendar')">
-          <img src="assets/icons/mdi_calendar.svg" alt="Calendar" class="icon-btn" />
+          <img src="assets/icons/mdi_calendar${state.activePanel==='calendar' ? '-cream' : ''}.svg" alt="Calendar" class="icon-btn" />
         </button>
       </div>
     </div>
-    <div class="right-panel">
-      ${renderPanel()}
+    <div class="right-panel-outer">
+      <div class="panel-title dressup-title">${panelTitle}</div>
+      <div class="right-panel">
+        ${renderPanel()}
+      </div>
     </div>
   `;
   saveState();
@@ -110,7 +118,7 @@ function renderCat(cat) {
 }
 
 function renderDressup() {
-  let html = `<h2 class="dressup-title">FAT CAT DRESS UP</h2>`;
+  let html = '';
   switch(state.dressupStep) {
     case 1:
       html += `
@@ -268,11 +276,11 @@ window.captureCat = async () => {
 };
 
 function renderCalendar() {
-  return `<h2>Calendar (Coming Soon)</h2><p>Your calendar will appear here.</p>`;
+  return `<p>Your calendar will appear here.</p>`;
 }
 
 function renderTodo() {
-  return `<h2>Todo List (Coming Soon)</h2><p>Your todo list will appear here.</p>`;
+  return `<p>Your todo list will appear here.</p>`;
 }
 
 render();

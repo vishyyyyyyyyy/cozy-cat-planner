@@ -1,4 +1,4 @@
-// Preload script for Electron (expose APIs if needed)
+// Preload script for Electron context isolation
 window.addEventListener('DOMContentLoaded', () => {
-  // You can expose APIs here if needed
+  // Expose any APIs if needed
 });

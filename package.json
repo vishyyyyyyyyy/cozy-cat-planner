@@ -1,12 +1,14 @@
 {
   "name": "cozy-cat-planner",
   "version": "1.0.0",
-  "description": "A cozy calendar/todo Electron app with a dressable kitty companion.",
+  "description": "A cozy calendar/todo Electron app with a dressable cat.",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
+  "author": "Vishalya Sairam",
+  "license": "MIT",
   "devDependencies": {
-    "electron": "^30.0.0"
+    "electron": "^28.2.3"
   }
 }

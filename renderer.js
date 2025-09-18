@@ -1,2 +1,2 @@
-// Entry point for renderer process
-require('./app');
+// (Optional) Renderer process logic for Electron
+// Currently unused, but you can add code here if needed

@@ -96,6 +96,7 @@ function render() {
         ${renderPanel()}
       </div>
     </div>
+    <button class="list-view-btn" onclick="window.setPanel('listView')">List View</button>
   `;
   saveState();
 }
@@ -110,6 +111,7 @@ function renderPanel() {
   if (state.activePanel === 'dressup') return renderDressup();
   if (state.activePanel === 'calendar') return renderCalendar();
   if (state.activePanel === 'todo') return renderTodo();
+  if (state.activePanel === 'listView') return renderListView();
   return '';
 }
 
@@ -348,6 +350,19 @@ if (!state.calendar) {
   };
 }
 
+// Ensure todoList is initialized in state.calendar
+if (!state.calendar.todoList) {
+  state.calendar.todoList = {
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
+  };
+}
+
 function pad2(n) { return n < 10 ? '0'+n : ''+n; }
 function getTodayISO() {
   const d = new Date();
@@ -355,9 +370,13 @@ function getTodayISO() {
 }
 
 function renderDayView() {
-  const { selectedDay, selectedMonth, selectedYear, events } = state.calendar;
+  const { selectedDay, selectedMonth, selectedYear, events, todoList } = state.calendar;
   const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
-  let html = `<div class="day-view-header">Events for ${selectedDay}/${selectedMonth+1}/${selectedYear}</div>`;
+  let html = `<div class="day-view-container">`;
+
+  // Events section
+  html += `<div class="day-view-left">`;
+  html += `<div class="day-view-header">Events for ${selectedDay}/${selectedMonth+1}/${selectedYear}</div>`;
   html += `<div class="day-view-list">`;
   if (events[dateISO] && events[dateISO].length > 0) {
     for (let ev of events[dateISO]) {
@@ -366,6 +385,25 @@ function renderDayView() {
   } else {
     html += `<div class="day-view-empty">No events for this day.</div>`;
   }
+  html += `</div>`;
+  html += `</div>`;
+
+  // Todos section
+  html += `<div class="day-view-right">`;
+  html += `<div class="day-view-header">Todos for ${selectedDay}/${selectedMonth+1}/${selectedYear}</div>`;
+  html += `<div class="day-view-list">`;
+  const dayName = new Date(selectedYear, selectedMonth, selectedDay).toLocaleString('en-US', { weekday: 'long' });
+  const todos = todoList[dayName] || [];
+  if (todos.length > 0) {
+    for (let todo of todos) {
+      html += `<div class="day-view-todo${todo.done ? ' done' : ''}">${todo.text}</div>`;
+    }
+  } else {
+    html += `<div class="day-view-empty">No todos for this day.</div>`;
+  }
+  html += `</div>`;
+  html += `</div>`;
+
   html += `</div>`;
   return html;
 }
@@ -387,12 +425,20 @@ function renderCalendar() {
     if (week.length === 7) { weeks.push(week); week = []; }
   }
   if (week.length) { while (week.length<7) week.push(null); weeks.push(week); }
-  let html = `<div class="calendar-header-row">
-    <button class="calendar-nav-btn" onclick="window.prevMonth()">&#8592;</button>
-    <div class="calendar-month-label">${monthNames[month]} ${year}</div>
-    <button class="calendar-nav-btn" onclick="window.nextMonth()">&#8594;</button>
-    <button class="calendar-add-btn" onclick="window.showAddEvent()" title="Add Event"><img src="assets/icons/add.svg" alt="Add" /></button>
+
+  let html = `<div class="calendar-nav-container">
+    <button class="calendar-nav-btn" onclick="window.prevMonth()">
+      <img src="assets/icons/back circle.svg" alt="Previous Month" />
+    </button>
+    <button class="calendar-nav-btn" onclick="window.nextMonth()">
+      <img src="assets/icons/right circle.svg" alt="Next Month" />
+    </button>
   </div>`;
+
+  html += `<div class="calendar-header-row">
+    <div class="calendar-month-label">${monthNames[month]} ${year}</div>
+  </div>`;
+
   html += `<div class="calendar-table-outer"><table class="calendar-table" style="border-collapse: collapse;"><thead><tr>`;
   for (let i=0; i<7; ++i) html += `<th class="calendar-dayname${i>=5?' weekend':''}">${dayNames[i]}</th>`;
   html += `</tr></thead><tbody>`;
@@ -565,5 +611,45 @@ window.clearTasks = () => {
     render();
   }
 };
+
+function renderListView() {
+  const { events, todoList } = state.calendar;
+  const dateISO = `${state.calendar.selectedYear}-${pad2(state.calendar.selectedMonth+1)}-${pad2(state.calendar.selectedDay)}`;
+  const dayName = new Date(state.calendar.selectedYear, state.calendar.selectedMonth, state.calendar.selectedDay).toLocaleString('en-US', { weekday: 'long' });
+
+  let html = `<div class="list-view-container">`;
+
+  // Events section
+  html += `<div class="list-view-left">`;
+  html += `<div class="list-view-header">${state.calendar.selectedDay}/${state.calendar.selectedMonth+1}/${state.calendar.selectedYear}</div>`;
+  html += `<div class="list-view-list">`;
+  if (events[dateISO] && events[dateISO].length > 0) {
+    for (let ev of events[dateISO]) {
+      html += `<div class="list-view-event${ev.important ? ' important' : ''}">${ev.text}</div>`;
+    }
+  } else {
+    html += `<div class="list-view-empty">No events for this day.</div>`;
+  }
+  html += `</div>`;
+  html += `</div>`;
+
+  // Todos section
+  html += `<div class="list-view-right">`;
+  html += `<div class="list-view-header">Todos</div>`;
+  html += `<div class="list-view-list">`;
+  const todos = todoList[dayName] || [];
+  if (todos.length > 0) {
+    for (let todo of todos) {
+      html += `<div class="list-view-todo${todo.done ? ' done' : ''}">${todo.text}</div>`;
+    }
+  } else {
+    html += `<div class="list-view-empty">No todos for this day.</div>`;
+  }
+  html += `</div>`;
+  html += `</div>`;
+
+  html += `</div>`;
+  return html;
+}
 
 render();

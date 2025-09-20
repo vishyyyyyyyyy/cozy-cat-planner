@@ -53,7 +53,6 @@ body {
   justify-content: center;
   gap: 18px;
   margin-bottom: 18px;
-  margin-top: 8px;
 }
 .calendar-month-label {
   font-size: 2rem;
@@ -64,21 +63,29 @@ body {
   border-radius: 10px;
   padding: 2px 18px 2px 18px;
 }
-.calendar-nav-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: none;
-  background: #9E4A4A;
-  color: #FFF4E6;
-  font-size: 1.5rem;
-  font-family: 'Luckiest Guy', cursive;
-  cursor: pointer;
-  transition: background 0.15s;
+.calendar-nav-container {
+  position: absolute; /* Position it above the calendar */
+  top: 70%; /* Adjust the top value to place it above the calendar */
+  left: 60%; /* Move the container to the left */
+  transform: translateX(0); /* Remove centering */
+  z-index: 10; /* Ensure it layers on top */
   display: flex;
+  gap: 40%; /* Add spacing between buttons */
+}
+
+.calendar-nav-btn {
+  background: none; /* Remove background color */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  width: auto; /* Allow the button to size based on the SVG */
+  height: auto; /* Allow the button to size based on the SVG */
+  display: inline-flex; /* Ensure proper alignment */
   align-items: center;
   justify-content: center;
+  cursor: pointer; /* Keep the pointer cursor for interactivity */
+
 }
+
 .calendar-add-btn {
   width: 38px;
   height: 38px;
@@ -98,10 +105,7 @@ body {
 }
 .calendar-table-outer {
   background: #FFF4E6;
-  border-radius: 18px;
-  box-shadow: 0 4px 12px rgba(158,74,74,0.18);
   padding: 12px 12px 8px 12px;
-  border: 4px solid #9E4A4A;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
@@ -111,6 +115,7 @@ body {
   border-collapse: separate;
   border-spacing: 0 4px;
   font-family: 'Luckiest Guy', cursive;
+  margin-left: -10px; /* Adjust the margin to shift the block */
 }
 .calendar-table th, .calendar-table td {
   text-align: center;
@@ -124,7 +129,7 @@ body {
   letter-spacing: 1px;
 }
 .calendar-dayname.weekend {
-  color: #3A7DD6;
+  color: #9E4A4A;
 }
 .calendar-weeknum {
   color: #9E4A4A;
@@ -139,27 +144,25 @@ body {
   min-height: 36px;
   position: relative;
   cursor: pointer;
-  transition: background 0.12s, box-shadow 0.12s;
 }
 .calendar-daycell.weekend {
-  color: #3A7DD6;
+  color: #9E4A4A;
 }
 .calendar-daycell.today {
-  border: 2.5px solid #9E4A4A;
-  box-shadow: 0 2px 0 #9E4A4A;
+  background-color: #9E4A4A;
+  color: #FFF4E6;
 }
 .calendar-daycell.selected {
-  background: #9E4A4A;
+  background-color: #9E4A4A;
   color: #FFF4E6;
   border-radius: 8px;
-  box-shadow: 0 2px 0 #9E4A4A;
 }
 .calendar-daynum {
   font-size: 1.1rem;
   font-weight: bold;
 }
 .calendar-event-chip {
-  background: #3A7DD6;
+  background: #9E4A4A;
   color: #FFF4E6;
   border-radius: 8px;
   padding: 2px 10px 2px 8px;
@@ -362,14 +365,13 @@ body {
 }
 /* Panel titles above right panel with brown stroke */
 .panel-title {
-  margin-top: 44px;
-  margin-bottom: -12px;
+  top: -20px;
   text-align: center;
   letter-spacing: 1px;
   width: max-content;
   font-family: 'Luckiest Guy', cursive;
   font-size: 2.3rem;
-  position: static; /* Reset to default positioning */
+  position: relative; /* Reset to default positioning */
 }
 .panel-title .title-duplicate {
   display: none; /* Remove the duplicate title styling */
@@ -450,6 +452,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: row;
+  overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 .left-panel {
   width: 40vw;
@@ -537,7 +540,7 @@ body {
 }
 
 .circle-btn.active .icon-btn {
-  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(1.5);
+  filter: none;
 }
 
 
@@ -562,7 +565,9 @@ body {
   align-self: center;
   justify-content: flex-start;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrollbar */
   box-shadow: 0px 5px 7.8px rgba(0, 0, 0, 0.25);
+  margin-top: -10px; /* Move the panel slightly up */
 }
 .dressup-buttons {
     display: flex;
@@ -587,3 +592,48 @@ body {
   .dressup-buttons button:hover {
     background: #E07A5F;
   }
+/* Added styles for the action buttons container and individual buttons */
+.calendar-action-buttons {
+  position: absolute; /* Position the container relative to the calendar */
+  bottom: 20px; /* Adjust the bottom spacing */
+  right: 20px; /* Adjust the right spacing */
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 12px; /* Add spacing between buttons */
+  z-index: 10; /* Ensure it layers on top */
+}
+
+.calendar-action-buttons button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #9E4A4A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.calendar-action-buttons button img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(0%) hue-rotate(0deg) brightness(1.1);
+}
+
+/* Adjusted styles for the list view button to be inside the calendar container right panel */
+.list-view-btn {
+  position: absolute; /* Position the button relative to the right panel */
+  bottom: 20px; /* Adjust the bottom spacing */
+  right: 20px; /* Adjust the right spacing */
+  border-radius: 8px;
+  background: #9E4A4A;
+  color: #FFF4E6;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 1.2rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s;
+}

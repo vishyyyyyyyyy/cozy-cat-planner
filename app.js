@@ -136,7 +136,7 @@ function renderCat(cat) {
     candycorn: 'candycorn.svg',
     none : 'none.svg',
   };
-  const costumeImg = cat.costume && costumeMap[cat.costume] ? `<img src="assets/costumes/${costumeMap[cat.costume]}" alt="costume" class="cat-overlay costume" />` : '';
+  const costumeImg = cat.costume && costumeMap[cat.costume] ? `<img src="assets/costumes/${costumeMap[cat.costume]}" alt="costume" class="cat-overlay costume" id="costume-${cat.costume}" />` : '';
   // Accessory overlays
   const accessoryMap = {
     scarf: 'scarf.svg',
@@ -144,7 +144,7 @@ function renderCat(cat) {
     headphone: 'headphone.svg',
     none : 'none.svg',
   };
-  const accessoryImg = cat.accessory && accessoryMap[cat.accessory] ? `<img src="assets/accessories/${accessoryMap[cat.accessory]}" alt="accessory" class="cat-overlay accessory" />` : '';
+  const accessoryImg = cat.accessory && accessoryMap[cat.accessory] ? `<img src="assets/accessories/${accessoryMap[cat.accessory]}" alt="accessory" class="cat-overlay accessory" id="accessory-${cat.accessory}" />` : '';
   // Hat overlays (reuse accessory for now)
   const decorationMap = {
     pumpkinBaby: 'pumpkin baby.svg',
@@ -152,7 +152,7 @@ function renderCat(cat) {
     leafPile: 'leaf pile.svg',
     none : 'none.svg',
   };
-  const decorationImg = cat.decoration && decorationMap[cat.decoration] ? `<img src="assets/decorations/${decorationMap[cat.decoration]}" alt="decoration" class="cat-overlay decoration" />` : '';
+  const decorationImg = cat.decoration && decorationMap[cat.decoration] ? `<img src="assets/decorations/${decorationMap[cat.decoration]}" alt="decoration" class="cat-overlay decoration" id="decoration-${cat.decoration}" />` : '';
   return `
     <div class="kitty-stack">
       <img src="assets/cats/${catImg}" alt="cat" class="cat-base" />

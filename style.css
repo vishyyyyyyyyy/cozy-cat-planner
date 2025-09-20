@@ -654,3 +654,52 @@ body {
 #none-overlay{
   opacity:0;
 }
+
+#costume-ghost{
+  top:4%;
+}
+
+#costume-vampire{
+  top:35.5%;
+  left:17.7%;
+  scale:1.02;
+}
+
+#costume-candycorn{
+  top:-5%;
+  left:7%;
+}
+
+#accessory-scarf{
+  top:47%;
+  left:24%;
+}
+
+#accessory-pumpkinHat{
+  top:6%;
+  left:20%;
+}
+
+#accessory-headphone{
+  top:-1%;
+  left:20%;
+}
+
+#decoration-pumpkinBaby{
+  top:60%;
+  left:60%;
+  z-index: 3;
+}
+
+#decoration-ghostBabies{
+  top:18%;
+  left:0%;
+  z-index: 3;
+}
+
+#decoration-leafPile{
+  top:73%;
+  left:13%;
+  z-index: 3;
+  /* scale: 1.2; */
+}

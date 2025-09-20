@@ -1,5 +1,4 @@
 /* --- Falling Leaves Animation --- */
-/* --- Falling Leaves Animation --- */
 #falling-leaves-bg {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -372,9 +371,7 @@ body {
   font-family: 'Luckiest Guy', cursive;
   font-size: 2.3rem;
   position: relative; /* Reset to default positioning */
-}
-.panel-title .title-duplicate {
-  display: none; /* Remove the duplicate title styling */
+  /* margin-bottom: 10px; Added margin to create spacing between the title and the right panel */
 }
 .dressup-title {
   font-size: 2.3rem;
@@ -382,12 +379,11 @@ body {
   padding: 8px 24px 6px 24px;
   margin: 44px auto -12px auto;
   text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-
 }
 
 .dressup-step-label {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 .fur-title {
   font-size: 1.6rem;
@@ -471,7 +467,7 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  margin-top: 40px; /* Move cat and overlays down */
+  margin-top: 110px; /* Move cat and overlays down */
 }
 /* Kitty image stacking and centering, never scale up */
 .kitty-stack {
@@ -567,7 +563,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden; /* Prevent horizontal scrollbar */
   box-shadow: 0px 5px 7.8px rgba(0, 0, 0, 0.25);
-  margin-top: -10px; /* Move the panel slightly up */
+  margin-top: 5px; /* Move the panel slightly up */
 }
 .dressup-buttons {
     display: flex;
@@ -636,4 +632,17 @@ body {
   cursor: pointer;
   text-align: center;
   transition: background 0.15s;
+}
+
+/* Updated styles for title images to replace text titles */
+.panel-title img {
+  width: auto; /* Adjust width as needed */
+  height: auto; /* Adjust height as needed */
+  display: block;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25)); /* Add shadow effect */
+}
+
+.panel-title {
+  position: relative; /* Keep the current positioning */
+  margin-top: 35px; /* Adjust spacing to match current title placement */
 }

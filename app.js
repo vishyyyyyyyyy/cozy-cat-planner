@@ -67,12 +67,13 @@ function saveState() {
   } catch (e) {}
 }
 
+// Updated the render function to use SVG assets for titles
 function render() {
   // Determine panel title
   let panelTitle = '';
-  if (state.activePanel === 'dressup') panelTitle = 'FAT CAT DRESS UP';
-  if (state.activePanel === 'calendar') panelTitle = 'CALENDAR';
-  if (state.activePanel === 'todo') panelTitle = 'TODO LIST';
+  if (state.activePanel === 'dressup') panelTitle = '<img src="assets/title/FAT CAT DRESS UP.svg" alt="Dress Up Title">';
+  if (state.activePanel === 'calendar') panelTitle = '<img src="assets/title/Calendar.svg" alt="Calendar Title">';
+  if (state.activePanel === 'todo') panelTitle = '<img src="assets/title/Todo LIST.svg" alt="Todo List Title">';
   app.innerHTML = `
     <div class="left-panel">
       <div class="kitty-container">

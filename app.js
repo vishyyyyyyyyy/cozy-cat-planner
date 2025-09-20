@@ -55,7 +55,7 @@ function loadState() {
       costume: null,
       accessory: null,
       eyes: null,
-      hat: null,
+      decoration: null,
     }
   };
 }
@@ -140,25 +140,25 @@ function renderCat(cat) {
   // Accessory overlays
   const accessoryMap = {
     scarf: 'scarf.svg',
-    pumpkinhat: 'pumpkin hat.svg',
+    pumpkinHat: 'pumpkin hat.svg',
     headphone: 'headphone.svg',
     none : 'none.svg',
   };
   const accessoryImg = cat.accessory && accessoryMap[cat.accessory] ? `<img src="assets/accessories/${accessoryMap[cat.accessory]}" alt="accessory" class="cat-overlay accessory" />` : '';
   // Hat overlays (reuse accessory for now)
   const decorationMap = {
-    'pumpkin baby': 'pumpkin baby.svg',
-    'ghost babies': 'ghost babies.svg',
-    'leaf pile': 'leaf pile.svg',
+    pumpkinBaby: 'pumpkin baby.svg',
+    ghostBabies: 'ghost babies.svg',
+    leafPile: 'leaf pile.svg',
     none : 'none.svg',
   };
-  const hatImg = cat.hat && decorationMap[cat.hat] ? `<img src="assets/accessories/${decorationMap[cat.hat]}" alt="hat" class="cat-overlay hat" />` : '';
+  const decorationImg = cat.decoration && decorationMap[cat.decoration] ? `<img src="assets/decorations/${decorationMap[cat.decoration]}" alt="decoration" class="cat-overlay decoration" />` : '';
   return `
     <div class="kitty-stack">
       <img src="assets/cats/${catImg}" alt="cat" class="cat-base" />
       ${costumeImg}
       ${accessoryImg}
-      ${hatImg}
+      ${decorationImg}
     </div>
   `;
 }
@@ -194,10 +194,10 @@ function renderDressup() {
           </div>
           <div class="fur-color-panel">
             <div class="fur-color-grid" style="grid-template-columns: repeat(2, 1fr);">
-              <button class="fur-color-swatch" style="background:url('widget-icons/ghost.svg');" onclick="window.setCostume('ghost')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/vampire.svg');" onclick="window.setCostume('vampire')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/candycorn.svg');" onclick="window.setCostume('candycorn')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/none.svg');" onclick="window.setCostume('none')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/ghost.svg');" onclick="window.setCostume('ghost')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/vampire.svg');" onclick="window.setCostume('vampire')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/candycorn.svg');" onclick="window.setCostume('candycorn')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/none.svg');" onclick="window.setCostume('hidden-img')"></button>
             </div>
           </div>
         `;
@@ -210,10 +210,10 @@ function renderDressup() {
           </div>
           <div class="fur-color-panel">
             <div class="fur-color-grid" style="grid-template-columns: repeat(2, 1fr);">
-              <button class="fur-color-swatch" style="background:url('widget-icons/scarf.svg');" onclick="window.setAccessory('scarf')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/pumpkinhat.svg');" onclick="window.setAccessory('pumpkinhat')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/headphone.svg');" onclick="window.setAccessory('headphone')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/none.svg');" onclick="window.setAccessory('none')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/scarf.svg');" onclick="window.setAccessory('scarf')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/pumpkin hat.svg');" onclick="window.setAccessory('pumpkinHat')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/headphone.svg');" onclick="window.setAccessory('headphone')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/none.svg');" onclick="window.setAccessory('hidden-img')"></button>
             </div>
           </div>
         `;
@@ -226,10 +226,10 @@ function renderDressup() {
           </div>
           <div class="fur-color-panel">
             <div class="fur-color-grid" style="grid-template-columns: repeat(2, 1fr);">
-              <button class="fur-color-swatch" style="background:url('widget-icons/pumpkinbaby.svg');" onclick="window.setEyes('pumpkinbaby')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/ghostbaby.svg');" onclick="window.setEyes('ghostbaby')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/leafpile.svg');" onclick="window.setEyes('leafpile')"></button>
-              <button class="fur-color-swatch" style="background:url('widget-icons/none.svg');" onclick="window.setEyes('none')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/pumpkin baby.svg');" onclick="window.setDecoration('pumpkinBaby')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/ghost baby.svg');" onclick="window.setDecoration('ghostBabies')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/leaf pile.svg');" onclick="window.setDecoration('leafPile')"></button>
+              <button class="fur-color-swatch" style="background:url('assets/widget icons/none.svg');" onclick="window.setDecoration('hidden-img')"></button>
             </div>
           </div>
         `;
@@ -241,7 +241,7 @@ function renderDressup() {
             <div class="fur-subtitle">SAVE A MEMORY OF YOUR KITTY</div>
           </div>
           <div class="fur-color-panel">
-            <button class="fur-color-swatch" style="background:url('widget-icons/camera.svg');" onclick="window.captureCat()"></button>
+            <button class="fur-color-swatch" style="background:url('widget icons/camera.svg');" onclick="window.captureCat()"></button>
           </div>
           <div class="fur-subtitle">TO GO TO YOUR CALENDAR OR TODO LIST, PRESS THE BUTTONS UNDER YOUR KITTY</div>
         `;
@@ -273,16 +273,12 @@ window.setAccessory = (accessory) => {
   saveState();
   render();
 };
-window.setEyes = (eyes) => {
-  state.cat.eyes = eyes;
+window.setDecoration = (decoration) => {
+  state.cat.decoration = decoration;
   saveState();
   render();
 };
-window.setHat = (hat) => {
-  state.cat.hat = hat;
-  saveState();
-  render();
-};
+
 window.nextDressup = () => {
   if (state.dressupStep < 5) state.dressupStep++;
   saveState();

@@ -1,3 +1,7 @@
+.fur-color-swatch.hidden-img {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
 /* --- Falling Leaves Animation --- */
 #falling-leaves-bg {
   position: fixed;
@@ -386,11 +390,11 @@ body {
   margin-bottom: 10px;
 }
 .fur-title {
-  font-size: 1.6rem;
+  font-size: 2rem;
   color: #9E4A4A;
   font-weight: bold;
   letter-spacing: 1px;
-  margin-bottom: 2px;
+  margin-bottom: 20px;
   font-family: 'Luckiest Guy', cursive;
 }
 .fur-subtitle {
@@ -398,7 +402,7 @@ body {
   color: #9E4A4A;
   font-weight: bold;
   letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
   font-family: 'Luckiest Guy', cursive;
 }
 /* Fur color panel grid for dressup */
@@ -412,13 +416,13 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 56px);
   grid-template-rows: repeat(2, 56px);
-  gap: 22px 22px;
+  gap: 50px 30px;
 }
 .fur-color-swatch {
-  width: 56px;
-  height: 56px;
+  width: 75px;
+  height: 75px;
   border-radius: 14px;
-  border: 4px solid #9E4A4A;
+  border: 7px solid #9E4A4A;
   box-shadow: 0 4px 0 #9e4a4a33;
   cursor: pointer;
   outline: none;
@@ -426,10 +430,9 @@ body {
   margin: 0;
   padding: 0;
   display: inline-block;
-}
-.fur-color-swatch.selected, .fur-color-swatch:focus {
-  border: 4.5px solid #9E4A4A;
-  box-shadow: 0 0 0 4px #fff4e6, 0 4px 0 #9E4A4A;
+   background-size: 70% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
 .fur-color-swatch:disabled {
   opacity: 0.3;
@@ -550,7 +553,7 @@ body {
 
 .right-panel {
   background: #FFF4E6;
-  border: 5px solid #9E4A4A;
+  border: 10px solid #9E4A4A;
   border-radius: 21px;
   display: flex;
   flex-direction: column;
@@ -645,4 +648,9 @@ body {
 .panel-title {
   position: relative; /* Keep the current positioning */
   margin-top: 35px; /* Adjust spacing to match current title placement */
+}
+
+
+#none-overlay{
+  opacity:0;
 }

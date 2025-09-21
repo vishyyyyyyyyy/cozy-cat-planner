@@ -1,3 +1,29 @@
+hr.todo-day-divider {
+  border: none;
+  border-top: 6px solid #9E4A4A;
+  margin: 18px 0 18px 0;
+  border-radius: 4px;
+}
+/* List View Flex Layout and Divider */
+.list-view-flex {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+.list-view-left, .list-view-right {
+  flex: 1 1 0;
+  padding: 24px 18px 24px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.list-view-divider {
+  width: 6px;
+  background: #9E4A4A;
+  border-radius: 4px;
+  margin: 12px 0;
+  align-self: stretch;
+}
 /* Screenshot background for kitty */
 .kitty-screenshot-bg {
   width: 400px;

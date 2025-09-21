@@ -95,9 +95,9 @@ function render() {
       <div class="panel-title dressup-title">${panelTitle}</div>
       <div class="right-panel">
         ${renderPanel()}
+        ${state.activePanel==='calendar' ? '<button class="list-view-btn" onclick="window.setPanel(\'listView\')">List View</button>' : ''}
       </div>
     </div>
-    <button class="list-view-btn" onclick="window.setPanel('listView')">List View</button>
   `;
   saveState();
 }
@@ -541,10 +541,8 @@ window.deleteEvent = (dateISO, idx) => {
 
 
 function renderTodo() {
-  // Group tasks by day (use day names for now)
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  // If no todoList in state, initialize
-  if (!state.todoList) state.todoList = {};
+  // Group tasks by date (YYYY-MM-DD)
+  if (!state.todoListByDate) state.todoListByDate = {};
   // UI for adding a task
   let html = `
     <div class="todo-header-row">
@@ -553,15 +551,21 @@ function renderTodo() {
     </div>
     <div class="todo-list-scroll">
   `;
-  for (const day of days) {
-    const tasks = state.todoList[day] || [];
-    if (tasks.length === 0) continue;
-    html += `<div class="todo-day-group"><div class="todo-day-label">${day.toUpperCase()}</div>`;
+  // Sort dates descending (most recent first)
+  const dates = Object.keys(state.todoListByDate).sort((a, b) => new Date(b) - new Date(a));
+  dates.forEach((date, idx) => {
+    const tasks = state.todoListByDate[date] || [];
+    if (tasks.length === 0) return;
+    // Format date as readable string
+    const d = new Date(date);
+    const dateLabel = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' });
+    if (idx > 0) html += '<hr class="todo-day-divider">';
+    html += `<div class="todo-day-group"><div class="todo-day-label">${dateLabel}</div>`;
     for (let i = 0; i < tasks.length; ++i) {
       const task = tasks[i];
       html += `
         <div class="todo-task-row">
-          <button class="todo-check-btn${task.done ? ' checked' : ''}" onclick="window.toggleTask('${day}',${i})" aria-label="Check">
+          <button class="todo-check-btn${task.done ? ' checked' : ''}" onclick="window.toggleTaskByDate('${date}',${i})" aria-label="Check">
             ${task.done ? '<span class="todo-checkmark">✔</span>' : ''}
           </button>
           <span class="todo-task-label${task.done ? ' done' : ''}">${task.text}</span>
@@ -569,18 +573,16 @@ function renderTodo() {
       `;
     }
     html += '</div>';
-  }
+  });
   html += '</div>';
   // Add task modal (hidden by default)
   html += `
     <div id="todo-add-modal" class="todo-modal" style="display:none;">
       <div class="todo-modal-content">
-        <label for="todo-day-select">Day:</label>
-        <select id="todo-day-select">
-          ${days.map(day => `<option value="${day}">${day}</option>`).join('')}
-        </select>
+        <label for="todo-date-input">Date:</label>
+        <input id="todo-date-input" type="date" />
         <input id="todo-task-input" type="text" maxlength="60" placeholder="Enter task..." />
-        <button onclick="window.addTask()">Add</button>
+        <button onclick="window.addTaskByDate()">Add</button>
         <button onclick="window.hideAddTask()">Cancel</button>
       </div>
     </div>
@@ -596,18 +598,19 @@ window.showAddTask = () => {
 window.hideAddTask = () => {
   document.getElementById('todo-add-modal').style.display = 'none';
 };
-window.addTask = () => {
-  const day = document.getElementById('todo-day-select').value;
+window.addTaskByDate = () => {
+  const date = document.getElementById('todo-date-input').value;
   const text = document.getElementById('todo-task-input').value.trim();
-  if (!text) return;
-  if (!state.todoList[day]) state.todoList[day] = [];
-  state.todoList[day].push({ text, done: false });
+  if (!date || !text) return;
+  if (!state.todoListByDate) state.todoListByDate = {};
+  if (!state.todoListByDate[date]) state.todoListByDate[date] = [];
+  state.todoListByDate[date].push({ text, done: false });
   saveState();
   render();
   window.hideAddTask();
 };
-window.toggleTask = (day, idx) => {
-  state.todoList[day][idx].done = !state.todoList[day][idx].done;
+window.toggleTaskByDate = (date, idx) => {
+  state.todoListByDate[date][idx].done = !state.todoListByDate[date][idx].done;
   saveState();
   render();
 };
@@ -625,7 +628,7 @@ function renderListView() {
   const dayName = new Date(state.calendar.selectedYear, state.calendar.selectedMonth, state.calendar.selectedDay).toLocaleString('en-US', { weekday: 'long' });
 
   let html = `<div class="list-view-container">`;
-
+  html += `<div class="list-view-flex">`;
   // Events section
   html += `<div class="list-view-left">`;
   html += `<div class="list-view-header">${state.calendar.selectedDay}/${state.calendar.selectedMonth+1}/${state.calendar.selectedYear}</div>`;
@@ -639,7 +642,8 @@ function renderListView() {
   }
   html += `</div>`;
   html += `</div>`;
-
+  // Divider
+  html += `<div class="list-view-divider"></div>`;
   // Todos section
   html += `<div class="list-view-right">`;
   html += `<div class="list-view-header">Todos</div>`;
@@ -654,7 +658,7 @@ function renderListView() {
   }
   html += `</div>`;
   html += `</div>`;
-
+  html += `</div>`; // end list-view-flex
   html += `</div>`;
   return html;
 }

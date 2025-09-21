@@ -241,7 +241,7 @@ function renderDressup() {
             <div class="fur-subtitle">SAVE A MEMORY OF YOUR KITTY</div>
           </div>
           <div class="fur-color-panel">
-            <button class="fur-color-swatch" style="background:url('widget icons/camera.svg');" onclick="window.captureCat()"></button>
+            <button class="camera-button" style="background:url('assets/widget icons/camera.svg');" onclick="window.captureCat()"></button>
           </div>
           <div class="fur-subtitle">TO GO TO YOUR CALENDAR OR TODO LIST, PRESS THE BUTTONS UNDER YOUR KITTY</div>
         `;
@@ -297,30 +297,40 @@ window.captureCat = async () => {
     document.body.appendChild(script);
     await new Promise(res => { script.onload = res; });
   }
-  const node = document.querySelector('.kitty-stack');
-  const baseImg = node ? node.querySelector('.cat-base') : null;
-  if (!node || !baseImg) return alert('Could not find cat to capture!');
-  // Wait for image to load if needed
+  const kittyStack = document.querySelector('.kitty-stack');
+  if (!kittyStack) return alert('Could not find cat to capture!');
+  const baseImg = kittyStack.querySelector('.cat-base');
+  if (!baseImg) return alert('Could not find cat image!');
   if (!baseImg.complete) await new Promise(res => { baseImg.onload = res; });
-  const width = baseImg.naturalWidth;
-  const height = baseImg.naturalHeight;
-  // Temporarily set node size to match image
-  const prevStyle = { width: node.style.width, height: node.style.height };
-  node.style.width = width + 'px';
-  node.style.height = height + 'px';
-  await new Promise(r => setTimeout(r, 10)); // allow reflow
-  window.html2canvas(node, {backgroundColor: null, width, height, scale: 1}).then(canvas => {
-    // Crop to image size if needed
-    if (canvas.width !== width || canvas.height !== height) {
-      const cropped = document.createElement('canvas');
-      cropped.width = width;
-      cropped.height = height;
-      cropped.getContext('2d').drawImage(canvas, 0, 0, width, height, 0, 0, width, height);
-      canvas = cropped;
-    }
-    // Restore node size
-    node.style.width = prevStyle.width;
-    node.style.height = prevStyle.height;
+
+  // Create a temporary screenshot background
+  const screenshotBg = document.createElement('div');
+  screenshotBg.className = 'kitty-screenshot-bg';
+  screenshotBg.style.position = 'fixed';
+  screenshotBg.style.left = '50%';
+  screenshotBg.style.top = '50%';
+  screenshotBg.style.transform = 'translate(-50%, -50%)';
+  screenshotBg.style.zIndex = '9999';
+  // Clone the kitty-stack
+  const clone = kittyStack.cloneNode(true);
+  // Copy computed width/height from original kitty-stack to clone
+  const computed = window.getComputedStyle(kittyStack);
+  clone.style.width = computed.width;
+  clone.style.height = computed.height;
+  // Move kitty and overlays down for screenshot so tall items aren't cut off
+  clone.style.marginTop = '35px';
+  screenshotBg.appendChild(clone);
+  document.body.appendChild(screenshotBg);
+
+  // Wait for images in clone to load
+  const imgs = clone.querySelectorAll('img');
+  await Promise.all(Array.from(imgs).map(img => img.complete ? Promise.resolve() : new Promise(res => { img.onload = res; })));
+
+  const width = screenshotBg.offsetWidth;
+  const height = screenshotBg.offsetHeight;
+  window.html2canvas(screenshotBg, {backgroundColor: null, width, height, scale: 1}).then(canvas => {
+    // Remove the temporary screenshot background
+    document.body.removeChild(screenshotBg);
     canvas.toBlob(async (blob) => {
       const { ipcRenderer } = window.require ? window.require('electron') : {};
       if (ipcRenderer) {

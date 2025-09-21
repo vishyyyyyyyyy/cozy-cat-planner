@@ -1,3 +1,14 @@
+/* Screenshot background for kitty */
+.kitty-screenshot-bg {
+  width: 400px;
+  height: 400px;
+  background: #D3AB95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
+}
 .fur-color-swatch.hidden-img {
   opacity: 0;
   transition: opacity 0.2s;
@@ -656,50 +667,59 @@ body {
 }
 
 #costume-ghost{
-  top:4%;
+  top: 20px;
+  left: 43px;
 }
-
 #costume-vampire{
-  top:35.5%;
-  left:17.7%;
-  scale:1.02;
+  top: 140px;
+  left: 62px;
+  scale: 1.02;
 }
-
 #costume-candycorn{
-  top:-5%;
-  left:7%;
+  top: -20px;
+  left: 25px;
 }
-
 #accessory-scarf{
-  top:47%;
-  left:24%;
+  top: 188px;
+  left: 85px;
 }
-
 #accessory-pumpkinHat{
-  top:6%;
-  left:20%;
+  top: 23px;
+  left: 72px;
 }
-
 #accessory-headphone{
-  top:-1%;
-  left:20%;
+  top: 0px;
+  left: 68px;
 }
-
 #decoration-pumpkinBaby{
-  top:60%;
-  left:60%;
+  top: 245px;
+  left: 225px;
   z-index: 3;
 }
-
 #decoration-ghostBabies{
-  top:18%;
-  left:0%;
+  top: 72px;
+  left: 0px;
   z-index: 3;
 }
-
 #decoration-leafPile{
-  top:73%;
-  left:13%;
+  top: 290px;
+  left: 50px;
   z-index: 3;
   /* scale: 1.2; */
+}
+
+.camera-button {
+  width: 75px;
+  height: 75px;
+  border-radius: 14px;
+  border: 7px solid #9E4A4A;
+  box-shadow: 0 4px 0 #9e4a4a33;
+  background-color: #9E4A4A;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+   background-size:120% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }

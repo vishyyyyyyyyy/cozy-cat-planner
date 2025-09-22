@@ -1,3 +1,151 @@
+/* Hide scrollbars in todo list scroll area */
+.todo-list-scroll {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.todo-list-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+/* Hide scrollbars but allow vertical scrolling */
+body, .right-panel, .list-view-flex-scroll {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+body::-webkit-scrollbar, .right-panel::-webkit-scrollbar, .list-view-flex-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+#app {
+  max-width: 100vw;
+}
+.right-panel-outer, .right-panel {
+  max-width: 100vw;
+  overflow-x: hidden !important;
+}
+/* Wrapper for calendar action row and list view button */
+.calendar-action-row-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+.calendar-action-row {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+.calendar-listview-btn-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+.calendar-add-btn, .calendar-delete-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #9E4A4A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.calendar-add-btn img, .calendar-delete-btn img {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(0%) hue-rotate(0deg) brightness(1.1);
+}
+.list-view-btn {
+  background: #9E4A4A;
+  color: #FFF4E6;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 32px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s;
+  margin: 0;
+  display: inline-block;
+}
+.list-view-btn:hover {
+  background: #E07A5F;
+}
+/* Make the date input calendar icon brown */
+.todo-modal-content input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(24%) saturate(1100%) hue-rotate(-18deg) brightness(0.95);
+}
+.todo-modal-content input[type="date"]::-webkit-input-placeholder { color: #9E4A4A; }
+.todo-modal-content input[type="date"]::-moz-placeholder { color: #9E4A4A; }
+.todo-modal-content input[type="date"]:-ms-input-placeholder { color: #9E4A4A; }
+.todo-modal-content input[type="date"]::placeholder { color: #9E4A4A; }
+.todo-modal-content label,
+.todo-modal-content input[type="date"],
+.todo-modal-content input[type="text"],
+.todo-modal-content button {
+  font-family: 'Luckiest Guy', cursive;
+  color: #9E4A4A;
+}
+.todo-modal-content label {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  color: #9E4A4A;
+}
+.todo-modal-content input[type="date"] {
+  border: 2px solid #9E4A4A;
+  border-radius: 8px;
+  background: #FFF4E6;
+  color: #9E4A4A;
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+}
+.todo-modal-content input[type="date"]::placeholder {
+  color: #9E4A4A;
+  opacity: 0.7;
+}
+.todo-modal-content input[type="text"] {
+  border: 3px solid #9E4A4A;
+  border-radius: 12px;
+  background: #FFF4E6;
+  color: #9E4A4A;
+  font-size: 1.3rem;
+  padding: 10px 16px;
+  margin-bottom: 18px;
+}
+.todo-modal-content input[type="text"]::placeholder {
+  color: #9E4A4A;
+  opacity: 0.7;
+}
+.todo-modal-content button {
+  background: #9E4A4A;
+  color: #FFF4E6;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 22px;
+  font-size: 1.2rem;
+  margin: 0 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transition: background 0.15s;
+}
+.todo-modal-content button:hover {
+  background: #E07A5F;
+}
 hr.todo-day-divider {
   border: none;
   border-top: 6px solid #9E4A4A;
@@ -5,24 +153,23 @@ hr.todo-day-divider {
   border-radius: 4px;
 }
 /* List View Flex Layout and Divider */
-.list-view-flex {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-}
-.list-view-left, .list-view-right {
-  flex: 1 1 0;
-  padding: 24px 18px 24px 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-.list-view-divider {
-  width: 6px;
+.list-view-btn {
   background: #9E4A4A;
-  border-radius: 4px;
-  margin: 12px 0;
-  align-self: stretch;
+  color: #FFF4E6;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 24px;
+  padding: 32px 32px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s;
+  margin: 20px auto 0 auto;
+  display: block;
+}
+.list-view-btn:hover {
+  background: #E07A5F;
 }
 /* Screenshot background for kitty */
 .kitty-screenshot-bg {
@@ -92,7 +239,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 18px;
-  margin-bottom: 18px;
+  margin-bottom: 4px; /* Reduced space below month label */
 }
 .calendar-month-label {
   font-size: 2rem;
@@ -101,16 +248,23 @@ body {
   letter-spacing: 1px;
   background: #FFF4E6;
   border-radius: 10px;
-  padding: 2px 18px 2px 18px;
+  padding: 0px 18px 0px 18px; /* Less vertical padding */
 }
 .calendar-nav-container {
   position: absolute; /* Position it above the calendar */
-  top: 70%; /* Adjust the top value to place it above the calendar */
-  left: 60%; /* Move the container to the left */
-  transform: translateX(0); /* Remove centering */
+  top: 58%; /* Vertically center relative to parent */
+  left: 40.25%;
+  width: 55%;
+  transform: translateY(-50%);
   z-index: 10; /* Ensure it layers on top */
   display: flex;
-  gap: 40%; /* Add spacing between buttons */
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+  pointer-events: none; /* Let only buttons be clickable */
+}
+.calendar-nav-btn {
+  pointer-events: auto;
 }
 
 .calendar-nav-btn {
@@ -123,7 +277,6 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer; /* Keep the pointer cursor for interactivity */
-
 }
 
 .calendar-add-btn {
@@ -161,6 +314,7 @@ body {
   text-align: center;
   font-size: 1.1rem;
   padding: 0.2em 0.4em;
+  color: #9E4A4A;
 }
 .calendar-table th {
   color: #9E4A4A;
@@ -177,6 +331,7 @@ body {
   font-weight: bold;
   opacity: 0.7;
 }
+/* Calendar day cell */
 .calendar-daycell {
   background: none;
   border-radius: 8px;
@@ -184,6 +339,13 @@ body {
   min-height: 36px;
   position: relative;
   cursor: pointer;
+  color: #9E4A4A;
+  transition: background 0.15s, color 0.15s;
+}
+/* Lighter brown for days not in current month */
+.calendar-other-month {
+  color: #C7A98B !important;
+  opacity: 0.7;
 }
 .calendar-daycell.weekend {
   color: #9E4A4A;
@@ -200,6 +362,7 @@ body {
 .calendar-daynum {
   font-size: 1.1rem;
   font-weight: bold;
+  color: #9E4A4A;
 }
 .calendar-event-chip {
   background: #9E4A4A;
@@ -264,6 +427,43 @@ body {
   margin: 0 6px;
   cursor: pointer;
   font-family: 'Luckiest Guy', cursive;
+}
+
+/* Day View Overview Styles */
+.day-view-header.day-view-overview-header {
+  color: #9E4A4A;
+  font-size: 1.05rem;
+  font-family: 'Luckiest Guy', cursive;
+  font-weight: bold;
+  margin: 10px 0 4px 0;
+  letter-spacing: 1px;
+}
+.day-view-bullets {
+  color: #9E4A4A;
+  font-size: 1.2rem;
+  font-family: 'Luckiest Guy', cursive;
+  margin-left: -20px;
+  margin-bottom: 24px;
+}
+.day-view-bullet {
+  color: #9E4A4A;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+  font-family: 'Luckiest Guy', cursive;
+}
+.day-view-bullet.done {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.day-view-bullet.important {
+  font-weight: bold;
+}
+.day-view-empty {
+  color: #9E4A4A;
+  opacity: 0.7;
+  font-size: 0.95rem;
+  font-family: 'Luckiest Guy', cursive;
+  margin-top: 0;
 }
 /* --- Todo List Panel Styles --- */
 .todo-header-row {
@@ -422,10 +622,34 @@ body {
   text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.dressup-step-label {
-  text-align: center;
-  margin-bottom: 10px;
+/* Calendar action row for add/delete buttons */
+.calendar-action-row {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 18px;
+  margin-bottom: 18px;
 }
+.calendar-add-btn, .calendar-delete-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #9E4A4A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.calendar-add-btn img, .calendar-delete-btn img {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(0%) hue-rotate(0deg) brightness(1.1);
+}
+
 .fur-title {
   font-size: 2rem;
   color: #9E4A4A;
@@ -488,7 +712,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: row;
-  overflow-x: hidden; /* Prevent horizontal scrollbar */
+  overflow-x: hidden !important; /* Prevent horizontal scrollbar */
 }
 .left-panel {
   width: 40vw;
@@ -601,7 +825,7 @@ body {
   align-self: center;
   justify-content: flex-start;
   overflow-y: auto;
-  overflow-x: hidden; /* Prevent horizontal scrollbar */
+  overflow-x: hidden !important; /* Prevent horizontal scrollbar */
   box-shadow: 0px 5px 7.8px rgba(0, 0, 0, 0.25);
   margin-top: 5px; /* Move the panel slightly up */
 }
@@ -611,7 +835,10 @@ body {
     gap: 16px;
     margin-top: 32px;
   }
-
+    .dressup-step-label {
+      text-align: center;
+      margin-bottom: 10px;
+    }
   .dressup-buttons button {
     background: #9E4A4A;
     color: #FFF4E6;
@@ -659,19 +886,41 @@ body {
 }
 
 /* Adjusted styles for the list view button to be inside the calendar container right panel */
+/* List View action buttons container at bottom right */
+/* Only keep .list-view-action-buttons for back button in list view */
+.list-view-action-buttons {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  z-index: 10;
+}
 .list-view-btn {
-  position: absolute; /* Position the button relative to the right panel */
-  bottom: 20px; /* Adjust the bottom spacing */
-  right: 20px; /* Adjust the right spacing */
-  border-radius: 8px;
   background: #9E4A4A;
   color: #FFF4E6;
   font-family: 'Luckiest Guy', cursive;
-  font-size: 1.2rem;
-  padding: 8px 16px;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 32px;
   cursor: pointer;
   text-align: center;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   transition: background 0.15s;
+  margin: 20px auto 0 auto;
+  display: block;
+}
+.list-view-btn:hover {
+  background: #E07A5F;
+}
+/* Make the list view scrollable if content is long */
+.list-view-flex-scroll {
+  max-height: 270px;
+  overflow-y: auto;
+  position: relative;
 }
 
 /* Updated styles for title images to replace text titles */
@@ -748,4 +997,32 @@ body {
    background-size:120% !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
+}
+.list-view-flex {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: stretch;
+  position: relative;
+}
+.list-view-divider {
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 90%;
+  background: #9E4A4A;
+  border-radius: 4px;
+  min-height: 400px;
+  z-index: 1;
+}
+.list-view-left, .list-view-right {
+  flex: 1 1 0;
+  padding: 24px 18px 24px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 0;
+  position: relative;
 }

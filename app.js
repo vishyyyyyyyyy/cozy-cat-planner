@@ -72,7 +72,7 @@ function render() {
   // Determine panel title
   let panelTitle = '';
   if (state.activePanel === 'dressup') panelTitle = '<img src="assets/title/FAT CAT DRESS UP.svg" alt="Dress Up Title">';
-  if (state.activePanel === 'calendar') panelTitle = '<img src="assets/title/Calendar.svg" alt="Calendar Title">';
+  if (state.activePanel === 'calendar' || state.activePanel === 'listView') panelTitle = '<img src="assets/title/Calendar.svg" alt="Calendar Title">';
   if (state.activePanel === 'todo') panelTitle = '<img src="assets/title/Todo LIST.svg" alt="Todo List Title">';
   app.innerHTML = `
     <div class="left-panel">
@@ -95,7 +95,17 @@ function render() {
       <div class="panel-title dressup-title">${panelTitle}</div>
       <div class="right-panel">
         ${renderPanel()}
-        ${state.activePanel==='calendar' ? '<button class="list-view-btn" onclick="window.setPanel(\'listView\')">List View</button>' : ''}
+        ${state.activePanel==='calendar' ? `
+          <div class="calendar-action-row-wrapper">
+            <div class="calendar-action-row">
+              <button class="calendar-add-btn" onclick="window.showAddEvent()" title="Add Event"><img src="assets/icons/add.svg" alt="Add" /></button>
+              <button class="calendar-delete-btn" onclick="window.deleteEventForSelectedDay && window.deleteEventForSelectedDay()" title="Delete Event"><img src="assets/icons/delete.svg" alt="Delete" /></button>
+            </div>
+            <div class="calendar-listview-btn-row">
+              <button class="list-view-btn" onclick="window.setPanel('listView')">List View</button>
+            </div>
+          </div>
+        ` : ''}
       </div>
     </div>
   `;
@@ -379,38 +389,30 @@ function getTodayISO() {
 function renderDayView() {
   const { selectedDay, selectedMonth, selectedYear, events, todoList } = state.calendar;
   const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
+  const dayName = new Date(selectedYear, selectedMonth, selectedDay).toLocaleString('en-US', { weekday: 'long' });
   let html = `<div class="day-view-container">`;
-
-  // Events section
-  html += `<div class="day-view-left">`;
-  html += `<div class="day-view-header">Events for ${selectedDay}/${selectedMonth+1}/${selectedYear}</div>`;
-  html += `<div class="day-view-list">`;
+  // Overview header
+  html += `<div class="day-view-header day-view-overview-header">Overview for ${dayName}, ${selectedMonth+1}/${selectedDay}/${selectedYear}</div>`;
+  // Bulleted list of events and todos
+  html += `<ul class="day-view-bullets">`;
+  let hasItems = false;
   if (events[dateISO] && events[dateISO].length > 0) {
     for (let ev of events[dateISO]) {
-      html += `<div class="day-view-event${ev.important ? ' important' : ''}">${ev.text}</div>`;
+      html += `<li class="day-view-bullet day-view-event${ev.important ? ' important' : ''}">${ev.text}</li>`;
+      hasItems = true;
     }
-  } else {
-    html += `<div class="day-view-empty">No events for this day.</div>`;
   }
-  html += `</div>`;
-  html += `</div>`;
-
-  // Todos section
-  html += `<div class="day-view-right">`;
-  html += `<div class="day-view-header">Todos for ${selectedDay}/${selectedMonth+1}/${selectedYear}</div>`;
-  html += `<div class="day-view-list">`;
-  const dayName = new Date(selectedYear, selectedMonth, selectedDay).toLocaleString('en-US', { weekday: 'long' });
   const todos = todoList[dayName] || [];
   if (todos.length > 0) {
     for (let todo of todos) {
-      html += `<div class="day-view-todo${todo.done ? ' done' : ''}">${todo.text}</div>`;
+      html += `<li class="day-view-bullet day-view-todo${todo.done ? ' done' : ''}">${todo.text}</li>`;
+      hasItems = true;
     }
-  } else {
-    html += `<div class="day-view-empty">No todos for this day.</div>`;
   }
-  html += `</div>`;
-  html += `</div>`;
-
+  if (!hasItems) {
+    html += `<li class="day-view-empty">No events or todos for this day.</li>`;
+  }
+  html += `</ul>`;
   html += `</div>`;
   return html;
 }
@@ -420,18 +422,30 @@ function renderCalendar() {
   const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const { month, year, selectedDay, selectedMonth, selectedYear, events } = state.calendar;
   const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month+1, 0);
+  const lastDay = new Date(year, month + 1, 0);
   const todayISO = getTodayISO();
+  // Calculate previous month's last day
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+  // Day of week for first day (0=Sun, 6=Sat)
   let startWeekDay = firstDay.getDay();
-  if (startWeekDay === 0) startWeekDay = 7;
+  // Build calendar grid: each cell is { day, monthOffset }
   const weeks = [];
   let week = [];
-  for (let i=1; i<startWeekDay; ++i) week.push(null);
-  for (let d=1; d<=lastDay.getDate(); ++d) {
-    week.push(d);
+  // Fill days from previous month
+  for (let i = 0; i < startWeekDay; ++i) {
+    week.push({ day: prevMonthLastDay - startWeekDay + i + 1, monthOffset: -1 });
+  }
+  // Fill current month days
+  for (let d = 1; d <= lastDay.getDate(); ++d) {
+    week.push({ day: d, monthOffset: 0 });
     if (week.length === 7) { weeks.push(week); week = []; }
   }
-  if (week.length) { while (week.length<7) week.push(null); weeks.push(week); }
+  // Fill next month days
+  let nextDay = 1;
+  while (week.length < 7) {
+    week.push({ day: nextDay++, monthOffset: 1 });
+  }
+  if (week.length) weeks.push(week);
 
   let html = `<div class="calendar-nav-container">
     <button class="calendar-nav-btn" onclick="window.prevMonth()">
@@ -449,25 +463,41 @@ function renderCalendar() {
   html += `<div class="calendar-table-outer"><table class="calendar-table" style="border-collapse: collapse;"><thead><tr>`;
   for (let i=0; i<7; ++i) html += `<th class="calendar-dayname${i>=5?' weekend':''}">${dayNames[i]}</th>`;
   html += `</tr></thead><tbody>`;
-  for (let w=0; w<weeks.length; ++w) {
+  for (let w = 0; w < weeks.length; ++w) {
     const weekDays = weeks[w];
     html += `<tr>`;
-    for (let i=0; i<7; ++i) {
-      const d = weekDays[(i+6)%7];
+    for (let i = 0; i < 7; ++i) {
+      // Calendar grid is now in order: weekDays[i]
+      const cell = weekDays[i];
+      const d = cell.day;
+      const offset = cell.monthOffset;
       let cellClass = 'calendar-daycell';
-      let isToday = (year === new Date().getFullYear() && month === new Date().getMonth() && d === new Date().getDate());
-      let isSelected = (year === selectedYear && month === selectedMonth && d === selectedDay);
-      if (i>=5) cellClass += ' weekend';
+      let cellStyle = '';
+      let cellYear = year, cellMonth = month;
+      if (offset === -1) {
+        // Previous month
+        cellMonth = month - 1;
+        if (cellMonth < 0) { cellMonth = 11; cellYear--; }
+        cellClass += ' calendar-other-month';
+        cellStyle += 'color: #C7A98B;';
+      } else if (offset === 1) {
+        // Next month
+        cellMonth = month + 1;
+        if (cellMonth > 11) { cellMonth = 0; cellYear++; }
+        cellClass += ' calendar-other-month';
+        cellStyle += 'color: #C7A98B;';
+      }
+      let isToday = (cellYear === new Date().getFullYear() && cellMonth === new Date().getMonth() && d === new Date().getDate());
+      let isSelected = (cellYear === selectedYear && cellMonth === selectedMonth && d === selectedDay);
+      if (i >= 5) cellClass += ' weekend';
       if (isToday) cellClass += ' today';
       if (isSelected) cellClass += ' selected';
-      let dateISO = d ? `${year}-${pad2(month+1)}-${pad2(d)}` : '';
-      html += `<td class="${cellClass}" style="border: none; ${isToday ? 'background-color: #9E4A4A; color: #FFF4E6;' : ''}" ${d?`onclick=\"window.selectCalendarDay(${d})\"`:''}>`;
-      if (d) {
-        html += `<div class="calendar-daynum">${d}</div>`;
-        if (events[dateISO]) {
-          for (let ev of events[dateISO]) {
-            html += `<div class="calendar-event-chip${ev.important?' important':''}">${ev.text}<button class='calendar-event-delete' onclick=\"window.deleteEvent('${dateISO}',${events[dateISO].indexOf(ev)})\">🗑️</button></div>`;
-          }
+      let dateISO = `${cellYear}-${pad2(cellMonth + 1)}-${pad2(d)}`;
+      html += `<td class="${cellClass}" style="border: none; ${cellStyle}${isToday ? 'background-color: #9E4A4A; color: #FFF4E6;' : ''}" onclick=\"window.selectCalendarDay(${d},${cellMonth},${cellYear})\">`;
+      html += `<div class="calendar-daynum">${d}</div>`;
+      if (events[dateISO]) {
+        for (let ev of events[dateISO]) {
+          html += `<div class="calendar-event-chip${ev.important ? ' important' : ''}">${ev.text}<button class='calendar-event-delete' onclick=\"window.deleteEvent('${dateISO}',${events[dateISO].indexOf(ev)})\">🗑️</button></div>`;
         }
       }
       html += `</td>`;
@@ -501,10 +531,18 @@ window.nextMonth = () => {
   saveState();
   render();
 };
-window.selectCalendarDay = (d) => {
+// Accepts (d, m, y) for selecting any day (including other months)
+window.selectCalendarDay = (d, m, y) => {
+  if (typeof m === 'undefined') m = state.calendar.month;
+  if (typeof y === 'undefined') y = state.calendar.year;
   state.calendar.selectedDay = d;
-  state.calendar.selectedMonth = state.calendar.month;
-  state.calendar.selectedYear = state.calendar.year;
+  state.calendar.selectedMonth = m;
+  state.calendar.selectedYear = y;
+  // If user clicks a day from another month, switch calendar view
+  if (m !== state.calendar.month || y !== state.calendar.year) {
+    state.calendar.month = m;
+    state.calendar.year = y;
+  }
   saveState();
   render();
 };
@@ -628,6 +666,7 @@ function renderListView() {
   const dayName = new Date(state.calendar.selectedYear, state.calendar.selectedMonth, state.calendar.selectedDay).toLocaleString('en-US', { weekday: 'long' });
 
   let html = `<div class="list-view-container">`;
+  html += `<div class="list-view-flex-scroll">`;
   html += `<div class="list-view-flex">`;
   // Events section
   html += `<div class="list-view-left">`;
@@ -659,8 +698,25 @@ function renderListView() {
   html += `</div>`;
   html += `</div>`;
   html += `</div>`; // end list-view-flex
+  html += `</div>`; // end list-view-flex-scroll
+  // Only show a button to return to calendar
+  html += `<div class="list-view-action-buttons">
+    <button class="list-view-btn" onclick="window.setPanel('calendar')">Back to Calendar</button>
+  </div>`;
   html += `</div>`;
   return html;
+// Delete all events for the selected day
+window.deleteEventForSelectedDay = () => {
+  const { selectedDay, selectedMonth, selectedYear, events } = state.calendar;
+  const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
+  if (events[dateISO] && events[dateISO].length > 0) {
+    if (confirm('Delete all events for this day?')) {
+      delete events[dateISO];
+      saveState();
+      render();
+    }
+  }
+};
 }
 
 render();

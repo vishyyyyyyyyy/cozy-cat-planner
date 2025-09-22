@@ -99,7 +99,7 @@ function render() {
           <div class="calendar-action-row-wrapper">
             <div class="calendar-action-row">
               <button class="calendar-add-btn" onclick="window.showAddEvent()" title="Add Event"><img src="assets/icons/add.svg" alt="Add" /></button>
-              <button class="calendar-delete-btn" onclick="window.deleteEventForSelectedDay && window.deleteEventForSelectedDay()" title="Delete Event"><img src="assets/icons/delete.svg" alt="Delete" /></button>
+          <button class="calendar-delete-btn${window.calendarEventDeleteMode ? ' delete-mode-active' : ''}" onclick="window.enterCalendarEventDeleteMode()" title="Delete Event"><img src="assets/icons/delete.svg" alt="Delete" /></button>
             </div>
             <div class="calendar-listview-btn-row">
               <button class="list-view-btn" onclick="window.setPanel('listView')">List View</button>
@@ -387,24 +387,25 @@ function getTodayISO() {
 }
 
 function renderDayView() {
-  const { selectedDay, selectedMonth, selectedYear, events, todoList } = state.calendar;
+  const { selectedDay, selectedMonth, selectedYear, events } = state.calendar;
   const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
-  const dayName = new Date(selectedYear, selectedMonth, selectedDay).toLocaleString('en-US', { weekday: 'long' });
   let html = `<div class="day-view-container">`;
-  // Overview header
-  html += `<div class="day-view-header day-view-overview-header">Overview for ${dayName}, ${selectedMonth+1}/${selectedDay}/${selectedYear}</div>`;
-  // Bulleted list of events and todos
+  html += `<div class="day-view-header day-view-overview-header">Overview for ${new Date(selectedYear, selectedMonth, selectedDay).toLocaleString('en-US', { weekday: 'long' })}, ${selectedMonth+1}/${selectedDay}/${selectedYear}</div>`;
   html += `<ul class="day-view-bullets">`;
   let hasItems = false;
+  // Events
   if (events[dateISO] && events[dateISO].length > 0) {
-    for (let ev of events[dateISO]) {
-      html += `<li class="day-view-bullet day-view-event${ev.important ? ' important' : ''}">${ev.text}</li>`;
+    let deleteMode = window.calendarEventDeleteMode === true;
+    for (let i = 0; i < events[dateISO].length; ++i) {
+      const ev = events[dateISO][i];
+      html += `<li class="day-view-bullet day-view-event${ev.important ? ' important' : ''}${deleteMode ? ' calendar-event-delete-mode' : ''}" ${deleteMode ? `onclick=\"window.deleteEventByIndex('${dateISO}',${i})\" title=\"Click to delete this event\"` : ''}>${ev.text}</li>`;
       hasItems = true;
     }
   }
-  const todos = todoList[dayName] || [];
-  if (todos.length > 0) {
-    for (let todo of todos) {
+  // Todos from todoListByDate
+  const todosByDate = (state.todoListByDate && state.todoListByDate[dateISO]) ? state.todoListByDate[dateISO] : [];
+  if (todosByDate.length > 0) {
+    for (let todo of todosByDate) {
       html += `<li class="day-view-bullet day-view-todo${todo.done ? ' done' : ''}">${todo.text}</li>`;
       hasItems = true;
     }
@@ -589,11 +590,16 @@ window.addEvent = () => {
   render();
   window.hideAddEvent();
 };
-window.deleteEvent = (dateISO, idx) => {
+window.enterCalendarEventDeleteMode = () => {
+  window.calendarEventDeleteMode = true;
+  render();
+};
+window.deleteEventByIndex = (dateISO, idx) => {
   const { events } = state.calendar;
   if (events[dateISO]) {
     events[dateISO].splice(idx, 1);
     if (events[dateISO].length === 0) delete events[dateISO];
+    window.calendarEventDeleteMode = false;
     saveState();
     render();
   }
@@ -607,7 +613,7 @@ function renderTodo() {
   let html = `
     <div class="todo-header-row">
       <button class="todo-add-btn" onclick="window.showAddTask()" title="Add Task"><img src="assets/icons/add.svg" alt="Add" /></button>
-      <button class="todo-clear-btn" onclick="window.clearTasks()" title="Clear All"><img src="assets/icons/delete.svg" alt="Delete" /></button>
+  <button class="todo-clear-btn${window.todoDeleteMode ? ' delete-mode-active' : ''}" onclick="window.enterTodoDeleteMode()" title="Delete"><img src="assets/icons/delete.svg" alt="Delete" /></button>
     </div>
     <div class="todo-list-scroll">
   `;
@@ -623,9 +629,10 @@ function renderTodo() {
     html += `<div class="todo-day-group"><div class="todo-day-label">${dateLabel}</div>`;
     for (let i = 0; i < tasks.length; ++i) {
       const task = tasks[i];
+      let deleteMode = window.todoDeleteMode === true;
       html += `
-        <div class="todo-task-row">
-          <button class="todo-check-btn${task.done ? ' checked' : ''}" onclick="window.toggleTaskByDate('${date}',${i})" aria-label="Check">
+        <div class="todo-task-row${deleteMode ? ' todo-delete-mode' : ''}" ${deleteMode ? `onclick=\"window.deleteTaskByDate('${date}',${i})\" title=\"Click to delete this todo\"` : ''}>
+          <button class="todo-check-btn${task.done ? ' checked' : ''}" onclick="window.toggleTaskByDate('${date}',${i}); event.stopPropagation();" aria-label="Check">
             ${task.done ? '<span class="todo-checkmark">✔</span>' : ''}
           </button>
           <span class="todo-task-label${task.done ? ' done' : ''}">${task.text}</span>
@@ -678,58 +685,67 @@ window.toggleTaskByDate = (date, idx) => {
   saveState();
   render();
 };
+window.enterTodoDeleteMode = () => {
+  window.todoDeleteMode = true;
+  render();
+};
+window.deleteTaskByDate = (date, idx) => {
+  if (!state.todoListByDate || !state.todoListByDate[date]) return;
+  state.todoListByDate[date].splice(idx, 1);
+  if (state.todoListByDate[date].length === 0) delete state.todoListByDate[date];
+  window.todoDeleteMode = false;
+  saveState();
+  render();
+};
 window.clearTasks = () => {
-  if (confirm('Clear all tasks for all days?')) {
-    state.todoList = {};
-    saveState();
-    render();
-  }
+  // No longer clears all tasks at once
+  alert('Delete mode: Click the trash can, then click a todo to delete it.');
 };
 
 function renderListView() {
-  const { events, todoList } = state.calendar;
+  const { events } = state.calendar;
   const dateISO = `${state.calendar.selectedYear}-${pad2(state.calendar.selectedMonth+1)}-${pad2(state.calendar.selectedDay)}`;
-  const dayName = new Date(state.calendar.selectedYear, state.calendar.selectedMonth, state.calendar.selectedDay).toLocaleString('en-US', { weekday: 'long' });
 
-  let html = `<div class="list-view-container">`;
-  html += `<div class="list-view-flex-scroll">`;
-  html += `<div class="list-view-flex">`;
-  // Events section
-  html += `<div class="list-view-left">`;
-  html += `<div class="list-view-header">${state.calendar.selectedDay}/${state.calendar.selectedMonth+1}/${state.calendar.selectedYear}</div>`;
-  html += `<div class="list-view-list">`;
-  if (events[dateISO] && events[dateISO].length > 0) {
-    for (let ev of events[dateISO]) {
-      html += `<div class="list-view-event${ev.important ? ' important' : ''}">${ev.text}</div>`;
-    }
-  } else {
-    html += `<div class="list-view-empty">No events for this day.</div>`;
-  }
+  let html = '';
+  // Header row
+  html += `<div class="list-view-header-row">`;
+  html += `<div class="list-view-header-centered">${new Date(state.calendar.selectedYear, state.calendar.selectedMonth, state.calendar.selectedDay).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' })}</div>`;
   html += `</div>`;
+  // Content row: left (times/events), divider, right (todos)
+  html += `<div class="list-view-content">`;
+  // Left: 24-hour time slots and events, scrollable
+  html += `<div class="list-view-left list-view-left-scroll">`;
+  for (let t = 0; t < 24; ++t) {
+    let label = (t === 0 ? '12 AM' : t < 12 ? t + ' AM' : t === 12 ? '12 PM' : (t-12) + ' PM');
+    html += `<div class="list-view-time-row"><span class="list-view-time-label">${label}</span>`;
+    // Show event block if event matches this time (simple demo: show first event at 12pm)
+    if (events[dateISO] && events[dateISO].length > 0 && t === 12) {
+      html += `<div class="list-view-event-block">${events[dateISO][0].text}</div>`;
+    }
+    html += `</div>`;
+  }
   html += `</div>`;
   // Divider
   html += `<div class="list-view-divider"></div>`;
-  // Todos section
+  // Right: todos with checkboxes
   html += `<div class="list-view-right">`;
-  html += `<div class="list-view-header">Todos</div>`;
-  html += `<div class="list-view-list">`;
-  const todos = todoList[dayName] || [];
-  if (todos.length > 0) {
-    for (let todo of todos) {
-      html += `<div class="list-view-todo${todo.done ? ' done' : ''}">${todo.text}</div>`;
+  const todosByDate = (state.todoListByDate && state.todoListByDate[dateISO]) ? state.todoListByDate[dateISO] : [];
+  if (todosByDate.length > 0) {
+    for (let todo of todosByDate) {
+      html += `<div class="list-view-todo-row">`;
+      html += `<span class="list-view-todo-checkbox${todo.done ? ' checked' : ''}">${todo.done ? '✔' : ''}</span>`;
+      html += `<span class="list-view-todo-label${todo.done ? ' done' : ''}">${todo.text}</span>`;
+      html += `</div>`;
     }
   } else {
     html += `<div class="list-view-empty">No todos for this day.</div>`;
   }
   html += `</div>`;
-  html += `</div>`;
-  html += `</div>`; // end list-view-flex
-  html += `</div>`; // end list-view-flex-scroll
+  html += `</div>`; // end list-view-content
   // Only show a button to return to calendar
   html += `<div class="list-view-action-buttons">
     <button class="list-view-btn" onclick="window.setPanel('calendar')">Back to Calendar</button>
   </div>`;
-  html += `</div>`;
   return html;
 // Delete all events for the selected day
 window.deleteEventForSelectedDay = () => {

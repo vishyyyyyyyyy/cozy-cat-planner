@@ -1,3 +1,156 @@
+.list-view-left-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+/* List View Redesign for Calendar Mockup */
+.list-view-container {
+  background: #FFF4E6;
+  border: 8px solid #9E4A4A;
+  border-radius: 24px;
+  box-shadow: 0 8px 16px rgba(158,74,74,0.12);
+  padding: 0 0 0 0;
+  margin: 40px auto 0 auto;
+  max-width: 600px;
+  width: 100%;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+.list-view-header-row {
+  width: 100%;
+  text-align: center;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 1.6rem;
+  color: #9E4A4A;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-top: 24px;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.list-view-header-centered {
+  flex: 1;
+  text-align: center;
+}
+.list-view-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 32px 32px 32px 32px;
+  gap: 0;
+}
+.list-view-left {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 24px;
+  min-width: 0;
+}
+.list-view-time-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.list-view-time-label {
+  font-size: 1.2rem;
+  color: #9E4A4A;
+  font-family: 'Luckiest Guy', cursive;
+  min-width: 60px;
+  text-align: right;
+  margin-right: 12px;
+}
+.list-view-event-block {
+  background: #9E4A4A;
+  color: #FFF4E6;
+  border-radius: 18px;
+  padding: 18px 32px;
+  font-size: 1.2rem;
+  font-family: 'Luckiest Guy', cursive;
+  font-weight: bold;
+  margin-left: 12px;
+  box-shadow: 0 2px 8px rgba(158,74,74,0.10);
+  display: inline-block;
+}
+.list-view-divider {
+  width: 6px;
+  background: #9E4A4A;
+  border-radius: 4px;
+  margin: 0 32px;
+  flex-shrink: 0;
+  height: 100%;
+  align-self: stretch;
+}
+.list-view-right {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
+}
+.list-view-todo-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.list-view-todo-checkbox {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 3px solid #9E4A4A;
+  background: #FFF4E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #9E4A4A;
+  font-family: 'Luckiest Guy', cursive;
+  cursor: pointer;
+  transition: background 0.15s, border 0.15s;
+}
+.list-view-todo-checkbox.checked {
+  background: #9E4A4A;
+  color: #FFF4E6;
+  border: 3px solid #9E4A4A;
+}
+.list-view-todo-label {
+  font-size: 1.2rem;
+  color: #9E4A4A;
+  font-family: 'Luckiest Guy', cursive;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+.list-view-todo-label.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+/* Delete mode highlight for calendar events and todos */
+.calendar-event-delete-mode,
+.todo-delete-mode {
+  background: #E07A5F !important;
+  color: #FFF4E6 !important;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+/* Delete button highlight when in delete mode */
+.calendar-delete-btn.delete-mode-active,
+.todo-clear-btn.delete-mode-active {
+  background: #E07A5F !important;
+  transition: background 0.15s;
+}
 /* Calendar Add Event Modal Styles */
 #calendar-add-modal.calendar-modal {
   position: fixed;
@@ -960,9 +1113,12 @@ body {
 }
 /* Make the list view scrollable if content is long */
 .list-view-flex-scroll {
-  max-height: 270px;
+  flex: 1 1 auto;
+  height: 100%;
+  max-height: none;
   overflow-y: auto;
   position: relative;
+  min-height: 0;
 }
 
 /* Updated styles for title images to replace text titles */
@@ -1048,16 +1204,14 @@ body {
   position: relative;
 }
 .list-view-divider {
-  position: absolute;
-  left: 50%;
-  top: 5%;
-  transform: translateX(-50%);
+  position: relative;
   width: 6px;
-  height: 90%;
+  height: auto;
   background: #9E4A4A;
   border-radius: 4px;
-  min-height: 400px;
+  margin: 0 0.5rem;
   z-index: 1;
+  flex-shrink: 0;
 }
 .list-view-left, .list-view-right {
   flex: 1 1 0;
@@ -1067,4 +1221,8 @@ body {
   justify-content: flex-start;
   min-width: 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }

@@ -618,12 +618,15 @@ function renderTodo() {
     <div class="todo-list-scroll">
   `;
   // Sort dates descending (most recent first)
-  const dates = Object.keys(state.todoListByDate).sort((a, b) => new Date(b) - new Date(a));
+  const dates = Object.keys(state.todoListByDate).sort((a, b) => b.localeCompare(a));
   dates.forEach((date, idx) => {
     const tasks = state.todoListByDate[date] || [];
     if (tasks.length === 0) return;
-    // Format date as readable string
-    const d = new Date(date);
+    // Format date as readable string without Date constructor
+    // date is in YYYY-MM-DD
+    const [year, month, day] = date.split('-');
+    const d = new Date(Number(year), Number(month) - 1, Number(day));
+    // Only use Date for label, not for sorting or key
     const dateLabel = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' });
     if (idx > 0) html += '<hr class="todo-day-divider">';
     html += `<div class="todo-day-group"><div class="todo-day-label">${dateLabel}</div>`;
@@ -669,10 +672,8 @@ window.addTaskByDate = () => {
   let dateStr = document.getElementById('todo-date-input').value;
   const text = document.getElementById('todo-task-input').value.trim();
   if (!dateStr || !text) return;
-  // Parse as local time (YYYY-MM-DD is interpreted as local by new Date)
-  const d = new Date(dateStr + 'T00:00:00');
-  // Format back to YYYY-MM-DD in local time
-  const date = `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  // Use the input value directly as the key (avoids timezone issues)
+  const date = dateStr;
   if (!state.todoListByDate) state.todoListByDate = {};
   if (!state.todoListByDate[date]) state.todoListByDate[date] = [];
   state.todoListByDate[date].push({ text, done: false });
@@ -747,18 +748,6 @@ function renderListView() {
     <button class="list-view-btn" onclick="window.setPanel('calendar')">Back to Calendar</button>
   </div>`;
   return html;
-// Delete all events for the selected day
-window.deleteEventForSelectedDay = () => {
-  const { selectedDay, selectedMonth, selectedYear, events } = state.calendar;
-  const dateISO = `${selectedYear}-${pad2(selectedMonth+1)}-${pad2(selectedDay)}`;
-  if (events[dateISO] && events[dateISO].length > 0) {
-    if (confirm('Delete all events for this day?')) {
-      delete events[dateISO];
-      saveState();
-      render();
-    }
-  }
-};
 }
 
 render();

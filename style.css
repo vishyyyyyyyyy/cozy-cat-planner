@@ -1,3 +1,59 @@
+/* Calendar Add Event Modal Styles */
+#calendar-add-modal.calendar-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+#calendar-add-modal .calendar-modal-content {
+  background: #FFF4E6;
+  border: 3px solid #9E4A4A;
+  border-radius: 18px;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  min-width: 260px;
+}
+#calendar-add-modal label {
+  font-size: 1.1rem;
+  font-family: 'Luckiest Guy', cursive;
+  color: #9E4A4A;
+  margin-bottom: 2px;
+  margin-top: 6px;
+}
+#calendar-add-modal input[type="text"],
+#calendar-add-modal input[type="date"],
+#calendar-add-modal input[type="time"] {
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 2px solid #9E4A4A;
+  outline: none;
+  margin-bottom: 2px;
+  background: #FFF4E6;
+  color: #9E4A4A;
+  font-family: 'Luckiest Guy', cursive;
+}
+#calendar-add-modal button {
+  font-size: 1.1rem;
+  background: #9E4A4A;
+  color: #FFF4E6;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 18px;
+  margin: 0 6px 0 0;
+  cursor: pointer;
+  font-family: 'Luckiest Guy', cursive;
+  transition: background 0.15s;
+}
+#calendar-add-modal button:hover {
+  background: #E07A5F;
+}
 /* Hide scrollbars in todo list scroll area */
 .todo-list-scroll {
   scrollbar-width: none; /* Firefox */
@@ -285,12 +341,8 @@ body {
   border-radius: 50%;
   border: none;
   background: #9E4A4A;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-left: 8px;
 }
+ 
 .calendar-add-btn img {
   width: 22px;
   height: 22px;
@@ -354,41 +406,30 @@ body {
   background-color: #9E4A4A;
   color: #FFF4E6;
 }
+.calendar-daycell.today .calendar-daynum {
+  color: #FFF4E6 !important;
+}
 .calendar-daycell.selected {
-  background-color: #9E4A4A;
-  color: #FFF4E6;
-  border-radius: 8px;
+  background: transparent !important;
+  color: #9E4A4A !important;
+  border: 3px solid #9E4A4A !important;
+  border-radius: 50% !important;
+  box-sizing: border-box;
+}
+/* If today is also selected, show today style (brown box, cream text) */
+.calendar-daycell.today.selected {
+  background-color: #9E4A4A !important;
+  color: #FFF4E6 !important;
+  border: none !important;
+  border-radius: 12px !important;
+}
+.calendar-daycell.today.selected .calendar-daynum {
+  color: #FFF4E6 !important;
 }
 .calendar-daynum {
   font-size: 1.1rem;
   font-weight: bold;
   color: #9E4A4A;
-}
-.calendar-event-chip {
-  background: #9E4A4A;
-  color: #FFF4E6;
-  border-radius: 8px;
-  padding: 2px 10px 2px 8px;
-  margin: 2px 0 0 0;
-  font-size: 0.95rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  position: relative;
-}
-.calendar-event-chip.important {
-  background: #9E4A4A;
-  color: #FFF4E6;
-  font-weight: bold;
-}
-.calendar-event-delete {
-  background: none;
-  border: none;
-  color: #FFF4E6;
-  font-size: 1.1rem;
-  margin-left: 4px;
-  cursor: pointer;
-  padding: 0;
 }
 .calendar-modal {
   position: fixed;
@@ -743,6 +784,7 @@ body {
   height: 100%;
   min-width: 0;
   min-height: 0;
+  top:5%;
 }
 .cat-base {
   display: block;

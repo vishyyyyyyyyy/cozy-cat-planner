@@ -76,6 +76,10 @@ function render() {
   if (state.activePanel === 'todo') panelTitle = '<img src="assets/title/Todo LIST.svg" alt="Todo List Title">';
   app.innerHTML = `
     <div class="left-panel">
+      <div class="kitty-bubble-container">
+        <img src="assets/text bubble.svg" alt="Kitty Bubble" class="kitty-bubble-svg" style="display:none;" />
+        <div class="kitty-bubble-text" style="display:none;"></div>
+      </div>
       <div class="kitty-container">
         ${renderCat(state.cat)}
       </div>
@@ -99,10 +103,8 @@ function render() {
           <div class="calendar-action-row-wrapper">
             <div class="calendar-action-row">
               <button class="calendar-add-btn" onclick="window.showAddEvent()" title="Add Event"><img src="assets/icons/add.svg" alt="Add" /></button>
-          <button class="calendar-delete-btn${window.calendarEventDeleteMode ? ' delete-mode-active' : ''}" onclick="window.enterCalendarEventDeleteMode()" title="Delete Event"><img src="assets/icons/delete.svg" alt="Delete" /></button>
-            </div>
-            <div class="calendar-listview-btn-row">
-              <button class="list-view-btn" onclick="window.setPanel('listView')">List View</button>
+              <button class="calendar-delete-btn${window.calendarEventDeleteMode ? ' delete-mode-active' : ''}" onclick="window.enterCalendarEventDeleteMode()" title="Delete Event"><img src="assets/icons/delete.svg" alt="Delete" /></button>
+              <button class="calendar-add-btn list-view-btn" onclick="window.setPanel('listView')" title="List View"><img src="assets/icons/list view.svg" alt="List View" /></button>
             </div>
           </div>
         ` : ''}
@@ -111,6 +113,66 @@ function render() {
   `;
   saveState();
 }
+
+// --- Kitty Bubble Logic ---
+const kittyMessages = [
+  "meow~",
+  "treats?",
+  "zzzz",
+  "purr...",
+  "🐟"
+];
+let kittyBubbleTimeout = null;
+let kittyBubbleCooldown = false;
+let kittyBubbleVisible = false;
+let kittyBubbleMsg = '';
+
+function showKittyBubble() {
+  if (kittyBubbleCooldown) return;
+  kittyBubbleMsg = kittyMessages[Math.floor(Math.random()*kittyMessages.length)];
+  kittyBubbleVisible = true;
+  updateKittyBubbleDOM();
+  // Hide after 1 minute (60s)
+  kittyBubbleTimeout = setTimeout(hideKittyBubble, 60000);
+  kittyBubbleCooldown = true;
+  // Cooldown for 4 min (240s) after hide
+  setTimeout(() => { kittyBubbleCooldown = false; scheduleKittyBubble(); }, 300000); // 1 min show + 4 min cooldown = 5 min total
+}
+function hideKittyBubble() {
+  kittyBubbleVisible = false;
+  updateKittyBubbleDOM();
+}
+function scheduleKittyBubble() {
+  if (kittyBubbleTimeout) clearTimeout(kittyBubbleTimeout);
+  // Show after 4 min (240s) cooldown
+  kittyBubbleTimeout = setTimeout(showKittyBubble, 240000);
+}
+
+function updateKittyBubbleDOM() {
+  const bubble = document.querySelector('.kitty-bubble-svg');
+  const text = document.querySelector('.kitty-bubble-text');
+  if (!bubble || !text) return;
+  if (kittyBubbleVisible) {
+    bubble.style.display = 'block';
+    text.style.display = 'block';
+    text.textContent = kittyBubbleMsg;
+  } else {
+    bubble.style.display = 'none';
+    text.style.display = 'none';
+  }
+}
+
+// Start bubble logic after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  showKittyBubble();
+  updateKittyBubbleDOM();
+});
+// Also re-schedule after every render (panel switch)
+const origRender = render;
+render = function() {
+  origRender.apply(this, arguments);
+  updateKittyBubbleDOM();
+};
 
 window.setPanel = (panel) => {
   state.activePanel = panel;
@@ -328,7 +390,7 @@ window.captureCat = async () => {
   clone.style.width = computed.width;
   clone.style.height = computed.height;
   // Move kitty and overlays down for screenshot so tall items aren't cut off
-  clone.style.marginTop = '35px';
+  clone.style.marginTop = '-80px';
   screenshotBg.appendChild(clone);
   document.body.appendChild(screenshotBg);
 
@@ -719,9 +781,17 @@ function renderListView() {
   for (let t = 0; t < 24; ++t) {
     let label = (t === 0 ? '12 AM' : t < 12 ? t + ' AM' : t === 12 ? '12 PM' : (t-12) + ' PM');
     html += `<div class="list-view-time-row"><span class="list-view-time-label">${label}</span>`;
-    // Show event block if event matches this time (simple demo: show first event at 12pm)
-    if (events[dateISO] && events[dateISO].length > 0 && t === 12) {
-      html += `<div class="list-view-event-block">${events[dateISO][0].text}</div>`;
+    // Show all events that start at this hour
+    if (events[dateISO] && events[dateISO].length > 0) {
+      for (let ev of events[dateISO]) {
+        if (ev.start) {
+          // ev.start is "HH:MM"; match hour
+          let evHour = parseInt(ev.start.split(':')[0], 10);
+          if (evHour === t) {
+            html += `<div class="list-view-event-block">${ev.text}</div>`;
+          }
+        }
+      }
     }
     html += `</div>`;
   }
@@ -745,7 +815,7 @@ function renderListView() {
   html += `</div>`; // end list-view-content
   // Only show a button to return to calendar
   html += `<div class="list-view-action-buttons">
-    <button class="list-view-btn" onclick="window.setPanel('calendar')">Back to Calendar</button>
+    <button class="calendar-back-btn" onclick="window.setPanel('calendar')" title="Back to Calendar"><img src="assets/icons/back to calendar view.svg" alt="Back" /></button>
   </div>`;
   return html;
 }

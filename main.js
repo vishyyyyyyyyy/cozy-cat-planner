@@ -1,10 +1,12 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 877,
     height: 657,
+    icon: path.join(__dirname, 'assets', 'kitty icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -36,3 +38,5 @@ ipcMain.handle('save-cat-image', async (event, buffer) => {
     require('fs').writeFileSync(filePath, buffer);
   }
 });
+
+

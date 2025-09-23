@@ -4,11 +4,16 @@
   "description": "A cozy calendar/todo Electron app with a dressable cat.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "author": "Vishalya Sairam",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^28.2.3"
+    "electron": "^28.2.3",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "icon": "assets/kitty app icon.ico"
   }
 }

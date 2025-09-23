@@ -1,4 +1,4 @@
----
+
 
 ## 🚀 Installation & Build Instructions
 
@@ -30,14 +30,19 @@
 - If you update the app, rebuild and reinstall to see changes.
 
 
-🐾 Cozy Cat Planner 🐾
+##  🐾 Cozy Cat Planner 🐾
 
 This is my entry for the Codedex monthly challenge!
-https://www.codedex.io/community/monthly-challenge/submission/[your-submission-link]
+https://www.codedex.io/community/monthly-challenge/submission/JNQqjFdVLcyZF48zEobN
 
 This app was built with the help of GitHub Copilot as part of the challenge to use AI assistance in development.
 
-When I saw the challenge theme, I knew my app had to be cozy, cat-themed, and super cute! I built this desktop calendar and todo app using Electron, vanilla JS, HTML, and CSS, with a dressable cat and lots of fall vibes.
+Since college started just a month ago, I’ve been needing to organize my homework, clubs, hangouts I’m going to. I tried a few planners out online, but I didn’t like the styles or layout, so I’ve been wanting to create my own planner but not having enough time. This monthly challenge gave me a chance to bring my planner idea to life!!
+
+This project is a revamp of one of my very first coding projects, Fat Cat Dressup. You can find it hereeee ⤷ ゛ ˎˊ˗ https://www.codedex.io/community/project-showcase/Q7Zq2NTzRczjDW3W3dOJ
+
+This challenge allowed me to show how much I’ve grown as a developer and my designing abilities. I’m a little iffy on javascript so I used copilot to help translate the python code for saving sessions for fur colors, accessories, etc into javascript and make the whole project better!
+
 
 Throughout development, I used Copilot to:
 - Generate the Electron boilerplate and install dependencies
@@ -75,7 +80,3 @@ I learned that Copilot works best step-by-step, and sometimes I had to manually 
 - More costumes and accessories for the kitty
 - Sync calendar/todos with Google Calendar
 - Add more animated backgrounds for different seasons
-
-🫂 Credits
-Thanks to the Codedex community for inspiration and feedback, and to everyone who helped me debug Electron packaging and CSS layout issues! (ฅ^•ﻌ•^ฅ)
-Special thanks to GitHub Copilot for assisting with code generation, bug fixes, and explanations throughout the project!
